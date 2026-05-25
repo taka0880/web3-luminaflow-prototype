@@ -1,0 +1,397 @@
+:root {
+    --bg-color: #0f172a;
+    --text-color: #f8fafc;
+    --primary-color: #0ea5e9;
+    --primary-glow: rgba(14, 165, 233, 0.5);
+    --success-color: #10b981;
+    --error-color: #ef4444;
+    --sink-color: #1e293b;
+    --faucet-color: #94a3b8;
+    --water-color: rgba(224, 242, 254, 0.8);
+    --font-sans: 'Noto Sans JP', 'Outfit', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* Typography & Header */
+.hero {
+    text-align: center;
+    padding: 4rem 2rem 2rem;
+    background: radial-gradient(circle at 50% -20%, #1e293b 0%, var(--bg-color) 70%);
+}
+
+.logo {
+    font-family: 'Outfit', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #e0f2fe, #38bdf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1rem;
+    letter-spacing: -1px;
+}
+
+.tagline {
+    font-size: 1.25rem;
+    font-weight: 300;
+    color: #94a3b8;
+}
+
+/* Demo Section */
+.demo-section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.demo-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.demo-header h2 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.audio-btn {
+    margin-top: 1rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 999px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 14px var(--primary-glow);
+}
+
+.audio-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--primary-glow);
+}
+
+.audio-btn.hidden {
+    display: none;
+}
+
+/* Controls */
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 3rem;
+    transition: opacity 0.3s;
+}
+
+.controls.disabled {
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+.mode-btn {
+    background: #1e293b;
+    border: 1px solid #334155;
+    padding: 1rem 2rem;
+    border-radius: 16px;
+    color: #94a3b8;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 200px;
+}
+
+.mode-btn:hover {
+    background: #2dd4bf20;
+    border-color: #2dd4bf;
+}
+
+.mode-btn.active {
+    background: rgba(14, 165, 233, 0.1);
+    border-color: var(--primary-color);
+    color: white;
+    box-shadow: 0 0 20px var(--primary-glow);
+}
+
+.mode-btn.active .mode-label {
+    color: var(--primary-color);
+}
+
+.mode-label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.mode-desc {
+    font-size: 0.875rem;
+}
+
+/* Simulator Area */
+.simulator-container {
+    background: #1e293b;
+    border-radius: 24px;
+    padding: 2rem;
+    position: relative;
+    box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+    margin-bottom: 3rem;
+    border: 1px solid #334155;
+    transition: opacity 0.3s;
+}
+
+.simulator-container.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* Sink Design (Top-down view) */
+.sink {
+    width: 100%;
+    height: 400px;
+    background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+    border-radius: 50% 50% 20% 20% / 20% 20% 10% 10%;
+    border: 4px solid #334155;
+    position: relative;
+    overflow: hidden;
+    cursor: crosshair;
+}
+
+/* Faucet Design */
+.faucet {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 80px;
+    background: linear-gradient(90deg, #64748b, #cbd5e1, #64748b);
+    border-radius: 0 0 10px 10px;
+    z-index: 10;
+}
+
+.faucet-head {
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 15px;
+    background: #475569;
+    border-radius: 5px;
+}
+
+/* Water Stream */
+.water-stream {
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(186,230,253,0.6) 100%);
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(186,230,253,0.8);
+    transition: height 0.1s ease-out; /* Fast response for After mode */
+    z-index: 5;
+    opacity: 0;
+}
+
+.water-stream.flowing {
+    height: 350px;
+    opacity: 1;
+    animation: flow 0.5s infinite linear;
+}
+
+@keyframes flow {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 100px; }
+}
+
+/* Light Guide (After Mode Only) */
+.light-guide {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+}
+
+.mode-after .light-guide {
+    opacity: 1;
+}
+
+.guide-rings {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px dashed rgba(14, 165, 233, 0.4);
+    box-shadow: 0 0 30px rgba(14, 165, 233, 0.2) inset;
+    animation: pulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+.guide-rings::before {
+    content: '';
+    position: absolute;
+    top: -10px; left: -10px; right: -10px; bottom: -10px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(14,165,233,0.1) 0%, transparent 70%);
+}
+
+.guide-text {
+    color: rgba(186, 230, 253, 0.8);
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px var(--primary-color);
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.05); opacity: 0.4; }
+}
+
+/* Sensor Area Hitbox (Invisible, used for JS logic) */
+.sensor-area {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 20;
+}
+
+/* Status Panel */
+.status-panel {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #0f172a;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    border: 1px solid #334155;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 500;
+}
+
+.indicator-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #64748b;
+    box-shadow: 0 0 10px rgba(100,116,139,0.5);
+    transition: background 0.2s, box-shadow 0.2s;
+}
+
+.indicator-dot.active {
+    background: var(--success-color);
+    box-shadow: 0 0 15px var(--success-color);
+}
+
+.indicator-dot.error {
+    background: var(--error-color);
+    box-shadow: 0 0 15px var(--error-color);
+}
+
+/* Value Proposition Cards */
+.pain-gain-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.card {
+    background: #1e293b;
+    border-radius: 16px;
+    padding: 1.5rem;
+    border: 1px solid #334155;
+}
+
+.pain-card {
+    border-top: 4px solid #ef4444;
+}
+
+.gain-card {
+    border-top: 4px solid #10b981;
+}
+
+.card h3 {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.pain-card h3 { color: #fca5a5; }
+.gain-card h3 { color: #6ee7b7; }
+
+.card ul {
+    list-style-type: none;
+}
+
+.card ul li {
+    margin-bottom: 0.5rem;
+    padding-left: 1.5rem;
+    position: relative;
+    color: #cbd5e1;
+}
+
+.pain-card ul li::before {
+    content: '×';
+    position: absolute;
+    left: 0;
+    color: #ef4444;
+    font-weight: bold;
+}
+
+.gain-card ul li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #10b981;
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .pain-gain-cards {
+        grid-template-columns: 1fr;
+    }
+    .controls {
+        flex-direction: column;
+        align-items: center;
+    }
+    .mode-btn {
+        width: 100%;
+    }
+}

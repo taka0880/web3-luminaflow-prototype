@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuminaFlow - 光が導く、次世代のスマート蛇口</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700&family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="hero">
+        <div class="hero-content">
+            <h1 class="logo">LuminaFlow</h1>
+            <p class="tagline">どこに手を出すか、迷わない。<br>かざした瞬間に、心地よい体験を。</p>
+        </div>
+    </header>
+
+    <main>
+        <section class="demo-section">
+            <div class="demo-header">
+                <h2>Interactive Demo</h2>
+                <p>画面上のシンクにマウス（または指）をかざして、従来品との違いを体験してください。</p>
+                <button id="startAudioBtn" class="audio-btn">デモを開始する（音が出ます）</button>
+            </div>
+
+            <div class="controls disabled" id="modeControls">
+                <button class="mode-btn active" data-mode="before">
+                    <span class="mode-label">Before</span>
+                    <span class="mode-desc">従来の自動水栓</span>
+                </button>
+                <button class="mode-btn" data-mode="after">
+                    <span class="mode-label">After</span>
+                    <span class="mode-desc">LuminaFlow</span>
+                </button>
+            </div>
+
+            <div class="simulator-container disabled" id="simulator">
+                <div class="sink">
+                    <div class="faucet">
+                        <div class="faucet-head">
+                            <div class="water-stream" id="waterStream"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Afterモードのみ表示される光のガイド -->
+                    <div class="light-guide" id="lightGuide">
+                        <div class="guide-rings"></div>
+                        <div class="guide-text">ここにかざす</div>
+                    </div>
+
+                    <!-- センサー判定エリア -->
+                    <div class="sensor-area" id="sensorArea"></div>
+                </div>
+
+                <div class="status-panel">
+                    <div class="status-indicator">
+                        <div class="indicator-dot" id="sensorDot"></div>
+                        <span id="statusText">待機中...</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="pain-gain-cards">
+                <div class="card pain-card">
+                    <h3>Beforeのストレス (Pains)</h3>
+                    <ul>
+                        <li>センサー位置が分からず手を振る</li>
+                        <li>なかなか水が出ず無視されている感覚</li>
+                        <li>最初に出る水が冷たい/熱すぎる</li>
+                    </ul>
+                </div>
+                <div class="card gain-card">
+                    <h3>LuminaFlowの価値 (Gains)</h3>
+                    <ul>
+                        <li>光ガイドで手を出す位置がひと目で分かる</li>
+                        <li>面検知センサーで空振りゼロ、即座に反応</li>
+                        <li>検知音でシステムが認識した安心感</li>
+                        <li>配管内排出機能で最初から適温（想定）</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

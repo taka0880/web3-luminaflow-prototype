@@ -367,31 +367,165 @@ body {
     color: #cbd5e1;
 }
 
-.pain-card ul li::before {
-    content: '×';
-    position: absolute;
-    left: 0;
-    color: #ef4444;
-    font-weight: bold;
-}
-
-.gain-card ul li::before {
-    content: '✓';
-    position: absolute;
-    left: 0;
-    color: #10b981;
-    font-weight: bold;
-}
-
-@media (max-width: 768px) {
-    .pain-gain-cards {
-        grid-template-columns: 1fr;
+    .pain-card ul li::before {
+        content: '×';
+        position: absolute;
+        left: 0;
+        color: #ef4444;
+        font-weight: bold;
     }
-    .controls {
-        flex-direction: column;
+    
+    .gain-card ul li::before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        color: #10b981;
+        font-weight: bold;
+    }
+
+    /* V2 Features: Progress Ring & Dashboard */
+    .progress-ring {
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform: rotate(-90deg);
+        z-index: 2;
+        pointer-events: none;
+    }
+    
+    .progress-ring-circle {
+        transition: stroke-dashoffset 0.1s linear, stroke 0.3s ease;
+        filter: drop-shadow(0 0 10px rgba(14, 165, 233, 0.5));
+    }
+    
+    .progress-ring-circle.success {
+        stroke: var(--success-color);
+        filter: drop-shadow(0 0 15px rgba(16, 185, 129, 0.8));
+    }
+
+    .guide-text.success {
+        color: var(--success-color);
+        text-shadow: 0 0 10px var(--success-color);
+        animation: popText 0.3s ease-out;
+    }
+
+    @keyframes popText {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1); }
+    }
+
+    .dashboard-panel {
+        margin-top: 1.5rem;
+        background: rgba(15, 23, 42, 0.8);
+        backdrop-filter: blur(10px);
+        border: 1px solid #334155;
+        border-radius: 16px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+        display: none;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    
+    .mode-after .dashboard-panel {
+        display: block;
+        animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
         align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid #334155;
     }
-    .mode-btn {
-        width: 100%;
+    
+    .dashboard-header h3 {
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.25rem;
+        color: #e2e8f0;
     }
-}
+    
+    .badge {
+        background: linear-gradient(135deg, #38bdf8, #818cf8);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: bold;
+        letter-spacing: 1px;
+    }
+    
+    .dashboard-stats {
+        display: flex;
+        gap: 1.5rem;
+    }
+    
+    .stat-box {
+        flex: 1;
+        background: rgba(30, 41, 59, 0.6);
+        padding: 1rem;
+        border-radius: 12px;
+        text-align: center;
+        border: 1px solid #1e293b;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .stat-box:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(14, 165, 233, 0.15);
+    }
+    
+    .stat-value {
+        font-family: 'Outfit', sans-serif;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #38bdf8;
+        line-height: 1.2;
+        text-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+    }
+    
+    .stat-value.highlight {
+        animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    @keyframes pop {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.15); color: var(--success-color); }
+        100% { transform: scale(1); }
+    }
+    
+    .stat-value .unit {
+        font-size: 1rem;
+        font-weight: 400;
+        color: #94a3b8;
+    }
+    
+    .stat-label {
+        font-size: 0.875rem;
+        color: #cbd5e1;
+        margin-top: 0.25rem;
+    }
+    
+    @media (max-width: 768px) {
+        .pain-gain-cards {
+            grid-template-columns: 1fr;
+        }
+        .controls {
+            flex-direction: column;
+            align-items: center;
+        }
+        .mode-btn {
+            width: 100%;
+        }
+        .dashboard-stats {
+            flex-direction: column;
+            gap: 1rem;
+        }
+    }

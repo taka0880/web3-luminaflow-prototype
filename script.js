@@ -8,12 +8,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const waterStream = document.getElementById('waterStream');
     const sensorDot = document.getElementById('sensorDot');
     const statusText = document.getElementById('statusText');
+    const progressRing = document.getElementById('progressRing');
+    const guideText = document.getElementById('guideText');
+    const scoreValue = document.getElementById('scoreValue');
+    const waterSavedValue = document.getElementById('waterSavedValue');
 
     // State
     let currentMode = 'before'; // 'before' or 'after'
     let isWaterFlowing = false;
     let audioContext = null;
     let isSystemReady = false;
+
+    // V2 Logic State
+    const requiredWashTime = 5000; // 5 seconds for demo
+    let washStartTime = 0;
+    let washAnimationFrame = null;
+    let isWashComplete = false;
+    let currentScore = 0;
+    let currentWaterSaved = 0.0;
+    const maxDashOffset = 565.48; // Circle circumference
 
     // --- Audio System ---
     function initAudio() {
@@ -58,6 +71,27 @@ document.addEventListener('DOMContentLoaded', () => {
         osc.stop(audioContext.currentTime + 0.3);
     }
 
+    // V2 Magical completion chime
+    function playCompletionSound() {
+        if (!audioContext) return;
+        const freqs = [523.25, 659.25, 783.99, 1046.50]; // C E G C
+        freqs.forEach((freq, i) => {
+            setTimeout(() => {
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                osc.type = 'sine';
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(0, audioContext.currentTime);
+                gain.gain.linearRampToValueAtTime(0.2, audioContext.currentTime + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.5);
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+                osc.start();
+                osc.stop(audioContext.currentTime + 0.5);
+            }, i * 100);
+        });
+    }
+
     // Generic beep function
     function playBeep(frequency, duration, type) {
         if (!audioContext) return;
@@ -90,7 +124,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // Update Simulator UI
             if (currentMode === 'after') {
                 simulator.classList.add('mode-after');
-                updateStatus('LuminaFlow モード：光のガイドに手をかざしてください。');
+                updateStatus('LuminaFlow V2：光のガイドにかざして手洗いを始めてください。');
+                resetProgress();
             } else {
                 simulator.classList.remove('mode-after');
                 updateStatus('従来の自動水栓モード：センサーの反応を試してください。');
@@ -112,15 +147,75 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // V2 Timer Logic
+    function updateProgress() {
+        if (!isWaterFlowing || currentMode !== 'after' || isWashComplete) return;
+        
+        const elapsed = Date.now() - washStartTime;
+        const progress = Math.min(elapsed / requiredWashTime, 1);
+        
+        if (progressRing) {
+            const offset = maxDashOffset - (progress * maxDashOffset);
+            progressRing.style.strokeDashoffset = offset;
+        }
+        
+        if (progress >= 1 && !isWashComplete) {
+            completeWashing();
+        } else {
+            washAnimationFrame = requestAnimationFrame(updateProgress);
+        }
+    }
+
+    function completeWashing() {
+        isWashComplete = true;
+        if (progressRing) progressRing.classList.add('success');
+        if (guideText) {
+            guideText.textContent = '手洗い完了！';
+            guideText.classList.add('success');
+        }
+        
+        // Update Score Dashboard
+        currentScore++;
+        if (scoreValue) {
+            scoreValue.textContent = currentScore;
+            scoreValue.classList.remove('highlight');
+            void scoreValue.offsetWidth; // reflow
+            scoreValue.classList.add('highlight');
+        }
+        
+        playCompletionSound();
+        updateStatus('正しい手洗いが完了しました！', 'success');
+    }
+
+    function resetProgress() {
+        isWashComplete = false;
+        if (progressRing) {
+            progressRing.style.strokeDashoffset = maxDashOffset;
+            progressRing.classList.remove('success');
+        }
+        if (guideText) {
+            guideText.textContent = 'ここにかざす';
+            guideText.classList.remove('success');
+        }
+        if (washAnimationFrame) {
+            cancelAnimationFrame(washAnimationFrame);
+            washAnimationFrame = null;
+        }
+    }
+
     function startWater() {
         if (isWaterFlowing) return;
         isWaterFlowing = true;
         waterStream.classList.add('flowing');
         
         if (currentMode === 'after') {
-            // LuminaFlow: Instant, satisfying response
+            // LuminaFlow V2: Instant response and timer start
             playSuccessBeep();
-            updateStatus('検知成功！適温の水が出ています。', 'success');
+            updateStatus('手洗いタイマー開始...', 'success');
+            if (!isWashComplete) {
+                washStartTime = Date.now();
+                updateProgress();
+            }
         } else {
             // Before: Finally got it working
             updateStatus('反応しました。（水が出るまで遅延）', 'success');
@@ -131,6 +226,29 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!isWaterFlowing) return;
         isWaterFlowing = false;
         waterStream.classList.remove('flowing');
+        
+        if (currentMode === 'after') {
+            if (washAnimationFrame) {
+                cancelAnimationFrame(washAnimationFrame);
+                washAnimationFrame = null;
+            }
+            
+            if (isWashComplete) {
+                // Increase eco feedback every time water stops after a successful wash
+                currentWaterSaved += 1.2;
+                if (waterSavedValue) {
+                    waterSavedValue.textContent = currentWaterSaved.toFixed(1);
+                    const parent = waterSavedValue.parentElement;
+                    parent.classList.remove('highlight');
+                    void parent.offsetWidth;
+                    parent.classList.add('highlight');
+                }
+            } else {
+                // Interrupted hand wash
+                resetProgress();
+            }
+        }
+        
         updateStatus('待機中...');
     }
 
@@ -179,7 +297,11 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Broad area (radius ~0.4)
             if (distFromCenter < 0.35) {
-                startWater();
+                if (!isWaterFlowing) {
+                    // Start fresh if coming back after a completed wash
+                    if (isWashComplete) resetProgress();
+                    startWater();
+                }
             } else {
                 stopWater();
             }

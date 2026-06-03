@@ -29,8 +29,8 @@
                     <span class="mode-desc">従来の自動水栓</span>
                 </button>
                 <button class="mode-btn" data-mode="after">
-                    <span class="mode-label">After</span>
-                    <span class="mode-desc">LuminaFlow</span>
+                    <span class="mode-label">LuminaFlow V2</span>
+                    <span class="mode-desc">行動記録・視覚化</span>
                 </button>
             </div>
 
@@ -45,7 +45,10 @@
                     <!-- Afterモードのみ表示される光のガイド -->
                     <div class="light-guide" id="lightGuide">
                         <div class="guide-rings"></div>
-                        <div class="guide-text">ここにかざす</div>
+                        <svg class="progress-ring" width="200" height="200">
+                            <circle class="progress-ring-circle" id="progressRing" stroke="#0ea5e9" stroke-width="6" fill="transparent" r="90" cx="100" cy="100" stroke-dasharray="565.48" stroke-dashoffset="565.48"/>
+                        </svg>
+                        <div class="guide-text" id="guideText">ここにかざす</div>
                     </div>
 
                     <!-- センサー判定エリア -->
@@ -56,6 +59,25 @@
                     <div class="status-indicator">
                         <div class="indicator-dot" id="sensorDot"></div>
                         <span id="statusText">待機中...</span>
+                    </div>
+                </div>
+                
+                <div class="dashboard-panel" id="dashboardPanel">
+                    <div class="dashboard-header">
+                        <h3>Action Record & Eco Feedback</h3>
+                        <span class="badge">V2 Feature</span>
+                    </div>
+                    <div class="dashboard-stats">
+                        <div class="stat-box">
+                            <div class="stat-value" id="scoreValue">0</div>
+                            <div class="stat-label">正しい手洗い達成回数</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value">
+                                <span id="waterSavedValue">0.0</span> <span class="unit">L</span>
+                            </div>
+                            <div class="stat-label">節水量（想定）</div>
+                        </div>
                     </div>
                 </div>
             </div>

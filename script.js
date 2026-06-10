@@ -12,6 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const guideText = document.getElementById('guideText');
     const scoreValue = document.getElementById('scoreValue');
     const waterSavedValue = document.getElementById('waterSavedValue');
+    const aiCoachPanel = document.querySelector('.ai-coach-panel');
+    const aiMessage = document.getElementById('aiMessage');
 
     // State
     let currentMode = 'before'; // 'before' or 'after'
@@ -27,6 +29,52 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentScore = 0;
     let currentWaterSaved = 0.0;
     const maxDashOffset = 565.48; // Circle circumference
+
+    // V3 AI Coach State
+    const aiMessages = {
+        success: [
+            "素晴らしい手洗いです！ウイルスをしっかり落とせましたね。",
+            "完璧です！今日の節水量も順調に伸びています。地球にも優しいですね。",
+            "お見事です！光のナビゲートに従うことで、無駄なく水を使えていますよ。",
+            "パーフェクト！この調子で清潔な習慣を維持しましょう。"
+        ],
+        interrupted: [
+            "おや、少し短かったようです。しっかり洗うとより効果的ですよ。",
+            "惜しい！次はリングが一周するまで手をかざし続けてみましょう。",
+            "手洗いは毎日の積み重ねが大切です。次回は最後まで頑張りましょう！"
+        ],
+        idle: [
+            "AIコーチが待機中... 手をかざして手洗いを始めてください。",
+            "LuminaFlow AIへようこそ。あなたの手洗いをサポートします。"
+        ]
+    };
+    let aiTypingTimeout = null;
+
+    // V3 AI Coach Functions
+    function setAIMessage(category) {
+        if (!aiCoachPanel || !aiMessage) return;
+        const msgs = aiMessages[category];
+        const msg = msgs[Math.floor(Math.random() * msgs.length)];
+        
+        if (aiTypingTimeout) clearTimeout(aiTypingTimeout);
+        aiCoachPanel.classList.add('ai-thinking');
+        aiMessage.textContent = "AIが分析中...";
+        
+        aiTypingTimeout = setTimeout(() => {
+            aiCoachPanel.classList.remove('ai-thinking');
+            typeText(aiMessage, msg, 0);
+        }, 800 + Math.random() * 500);
+    }
+    
+    function typeText(element, text, index) {
+        if (index === 0) element.textContent = "";
+        if (index < text.length) {
+            element.textContent += text.charAt(index);
+            aiTypingTimeout = setTimeout(() => {
+                typeText(element, text, index + 1);
+            }, 30 + Math.random() * 40);
+        }
+    }
 
     // --- Audio System ---
     function initAudio() {
@@ -124,8 +172,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // Update Simulator UI
             if (currentMode === 'after') {
                 simulator.classList.add('mode-after');
-                updateStatus('LuminaFlow V2：光のガイドにかざして手洗いを始めてください。');
+                updateStatus('LuminaFlow V3：光のガイドにかざして手洗いを始めてください。');
                 resetProgress();
+                setAIMessage('idle');
             } else {
                 simulator.classList.remove('mode-after');
                 updateStatus('従来の自動水栓モード：センサーの反応を試してください。');
@@ -185,6 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         playCompletionSound();
         updateStatus('正しい手洗いが完了しました！', 'success');
+        setAIMessage('success');
     }
 
     function resetProgress() {
@@ -246,6 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 // Interrupted hand wash
                 resetProgress();
+                setAIMessage('interrupted');
             }
         }
         

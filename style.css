@@ -512,6 +512,103 @@ body {
         color: #cbd5e1;
         margin-top: 0.25rem;
     }
+
+    /* V3 AI Coach Features */
+    .dashboard-content {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .ai-coach-panel {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        background: rgba(14, 165, 233, 0.05);
+        border: 1px solid rgba(14, 165, 233, 0.3);
+        border-radius: 12px;
+        padding: 1rem;
+        box-shadow: inset 0 0 20px rgba(14, 165, 233, 0.05);
+        transition: background 0.3s ease;
+    }
+    
+    .ai-coach-panel.ai-thinking {
+        background: rgba(139, 92, 246, 0.1);
+        border-color: rgba(139, 92, 246, 0.4);
+    }
+    
+    .ai-avatar {
+        position: relative;
+        width: 44px;
+        height: 44px;
+        flex-shrink: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .ai-core {
+        width: 18px;
+        height: 18px;
+        background: #e0f2fe;
+        border-radius: 50%;
+        box-shadow: 0 0 15px #38bdf8;
+        animation: aiBreathe 3s infinite ease-in-out;
+        transition: all 0.3s ease;
+    }
+
+    .ai-thinking .ai-core {
+        background: #f3e8ff;
+        box-shadow: 0 0 15px #a78bfa;
+        animation: aiBreatheFast 1s infinite ease-in-out;
+    }
+    
+    .ai-ring {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border: 2px solid #38bdf8;
+        border-radius: 50%;
+        animation: aiPulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+        transition: border-color 0.3s ease;
+    }
+
+    .ai-thinking .ai-ring {
+        border-color: #a78bfa;
+        animation: aiPulse 1s infinite cubic-bezier(0.4, 0, 0.6, 1);
+    }
+    
+    .ai-message-box {
+        flex: 1;
+        font-family: 'Noto Sans JP', sans-serif;
+        font-size: 0.95rem;
+        color: #f8fafc;
+        line-height: 1.5;
+        border-left: 2px solid rgba(56, 189, 248, 0.5);
+        padding-left: 1rem;
+        min-height: 2.85rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .ai-thinking .ai-message-box {
+        border-left-color: rgba(167, 139, 250, 0.5);
+    }
+    
+    @keyframes aiBreathe {
+        0%, 100% { transform: scale(1); opacity: 0.8; }
+        50% { transform: scale(1.1); opacity: 1; box-shadow: 0 0 25px #38bdf8; }
+    }
+
+    @keyframes aiBreatheFast {
+        0%, 100% { transform: scale(1); opacity: 0.8; }
+        50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 25px #a78bfa; }
+    }
+    
+    @keyframes aiPulse {
+        0% { transform: scale(0.8); opacity: 1; }
+        100% { transform: scale(1.3); opacity: 0; }
+    }
     
     @media (max-width: 768px) {
         .pain-gain-cards {

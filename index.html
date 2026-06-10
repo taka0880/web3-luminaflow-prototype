@@ -29,8 +29,8 @@
                     <span class="mode-desc">従来の自動水栓</span>
                 </button>
                 <button class="mode-btn" data-mode="after">
-                    <span class="mode-label">LuminaFlow V2</span>
-                    <span class="mode-desc">行動記録・視覚化</span>
+                    <span class="mode-label">LuminaFlow V3</span>
+                    <span class="mode-desc">AI手洗いコーチ</span>
                 </button>
             </div>
 
@@ -64,19 +64,31 @@
                 
                 <div class="dashboard-panel" id="dashboardPanel">
                     <div class="dashboard-header">
-                        <h3>Action Record & Eco Feedback</h3>
-                        <span class="badge">V2 Feature</span>
+                        <h3>Action Record & AI Coach</h3>
+                        <span class="badge">V3 Feature</span>
                     </div>
-                    <div class="dashboard-stats">
-                        <div class="stat-box">
-                            <div class="stat-value" id="scoreValue">0</div>
-                            <div class="stat-label">正しい手洗い達成回数</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-value">
-                                <span id="waterSavedValue">0.0</span> <span class="unit">L</span>
+                    <div class="dashboard-content">
+                        <div class="dashboard-stats">
+                            <div class="stat-box">
+                                <div class="stat-value" id="scoreValue">0</div>
+                                <div class="stat-label">正しい手洗い達成回数</div>
                             </div>
-                            <div class="stat-label">節水量（想定）</div>
+                            <div class="stat-box">
+                                <div class="stat-value">
+                                    <span id="waterSavedValue">0.0</span> <span class="unit">L</span>
+                                </div>
+                                <div class="stat-label">節水量（想定）</div>
+                            </div>
+                        </div>
+                        
+                        <div class="ai-coach-panel">
+                            <div class="ai-avatar">
+                                <div class="ai-core"></div>
+                                <div class="ai-ring"></div>
+                            </div>
+                            <div class="ai-message-box">
+                                <p id="aiMessage">AIコーチが待機中... 手をかざして手洗いを始めてください。</p>
+                            </div>
                         </div>
                     </div>
                 </div>

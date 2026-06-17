@@ -14,6 +14,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const waterSavedValue = document.getElementById('waterSavedValue');
     const aiCoachPanel = document.querySelector('.ai-coach-panel');
     const aiMessage = document.getElementById('aiMessage');
+    const streakValue = document.getElementById('streakValue');
+    const streakBox = document.querySelector('.streak-box');
+    const personaBtns = document.querySelectorAll('.persona-btn');
 
     // State
     let currentMode = 'before'; // 'before' or 'after'
@@ -27,34 +30,69 @@ document.addEventListener('DOMContentLoaded', () => {
     let washAnimationFrame = null;
     let isWashComplete = false;
     let currentScore = 0;
+    let currentStreak = 0;
     let currentWaterSaved = 0.0;
+    let currentPersona = 'healing';
     const maxDashOffset = 565.48; // Circle circumference
 
-    // V3 AI Coach State
+    // V4 AI Coach State
     const aiMessages = {
-        success: [
-            "素晴らしい手洗いです！ウイルスをしっかり落とせましたね。",
-            "完璧です！今日の節水量も順調に伸びています。地球にも優しいですね。",
-            "お見事です！光のナビゲートに従うことで、無駄なく水を使えていますよ。",
-            "パーフェクト！この調子で清潔な習慣を維持しましょう。"
-        ],
-        interrupted: [
-            "おや、少し短かったようです。しっかり洗うとより効果的ですよ。",
-            "惜しい！次はリングが一周するまで手をかざし続けてみましょう。",
-            "手洗いは毎日の積み重ねが大切です。次回は最後まで頑張りましょう！"
-        ],
-        idle: [
-            "AIコーチが待機中... 手をかざして手洗いを始めてください。",
-            "LuminaFlow AIへようこそ。あなたの手洗いをサポートします。"
-        ]
+        healing: {
+            success: [
+                "素晴らしい手洗いです！ウイルスをしっかり落とせましたね。",
+                "完璧です！今日の節水量も順調に伸びています。地球にも優しいですね。",
+                "お見事です！光のナビゲートに従うことで、無駄なく水を使えていますよ。",
+                "今日も綺麗になりましたね。この調子で清潔な習慣を維持しましょう。"
+            ],
+            interrupted: [
+                "おや、少し短かったようです。しっかり洗うとより効果的ですよ。",
+                "惜しい！次はリングが一周するまで手をかざし続けてみましょう。",
+                "手洗いは毎日の積み重ねが大切です。次回は最後まで頑張りましょう！"
+            ],
+            idle: [
+                "AIコーチ（癒やし）が待機中... いつでもどうぞ。"
+            ]
+        },
+        praise: {
+            success: [
+                "天才的！こんなに完璧な手洗い見たことない！✨",
+                "神がかってます！あなたの手洗いが地球を救う！🌍",
+                "最高です！その手洗いの美しさ、スタンディングオベーション！👏"
+            ],
+            interrupted: [
+                "惜しい！でもあと少しだったよ！君なら次は絶対にできる！✨",
+                "どんまい！次はもう少し長く洗ってみよう！応援してるよ！"
+            ],
+            idle: [
+                "AIコーチ（褒めちぎり）が待機中！さあ、最高の手洗いを見せて！✨"
+            ]
+        },
+        hotblooded: {
+            success: [
+                "ヨォーッシャ！！完璧だ！！お前の手洗いは世界一熱いぜ！！🔥",
+                "いいぞ！！その調子でガンガン手を洗っていけ！！気合十分だ！！🔥",
+                "最高だ！！ウイルスも逃げ出す熱い手洗いだったぜ！！🔥"
+            ],
+            interrupted: [
+                "甘い！！もっと熱く、長く洗え！！自分に負けるな！！🔥",
+                "まだまだ！！リングが満ちるまで絶対に手を離すな！！気合だ！！🔥"
+            ],
+            idle: [
+                "AIコーチ（熱血）が待機中だ！！いつでもかかってこい！！🔥"
+            ]
+        }
     };
     let aiTypingTimeout = null;
 
-    // V3 AI Coach Functions
+    // V4 AI Coach Functions
     function setAIMessage(category) {
         if (!aiCoachPanel || !aiMessage) return;
-        const msgs = aiMessages[category];
-        const msg = msgs[Math.floor(Math.random() * msgs.length)];
+        const msgs = aiMessages[currentPersona][category];
+        let msg = msgs[Math.floor(Math.random() * msgs.length)];
+        
+        if (category === 'success' && currentStreak >= 3) {
+            msg = `🔥 ${currentStreak}連続達成！🔥 ` + msg;
+        }
         
         if (aiTypingTimeout) clearTimeout(aiTypingTimeout);
         aiCoachPanel.classList.add('ai-thinking');
@@ -63,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
         aiTypingTimeout = setTimeout(() => {
             aiCoachPanel.classList.remove('ai-thinking');
             typeText(aiMessage, msg, 0);
-        }, 800 + Math.random() * 500);
+        }, 600 + Math.random() * 400);
     }
     
     function typeText(element, text, index) {
@@ -172,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Update Simulator UI
             if (currentMode === 'after') {
                 simulator.classList.add('mode-after');
-                updateStatus('LuminaFlow V3：光のガイドにかざして手洗いを始めてください。');
+                updateStatus('LuminaFlow V4：光のガイドにかざして手洗いを始めてください。');
                 resetProgress();
                 setAIMessage('idle');
             } else {
@@ -225,11 +263,20 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Update Score Dashboard
         currentScore++;
+        currentStreak++;
         if (scoreValue) {
             scoreValue.textContent = currentScore;
             scoreValue.classList.remove('highlight');
             void scoreValue.offsetWidth; // reflow
             scoreValue.classList.add('highlight');
+        }
+        
+        if (streakValue && streakBox) {
+            streakValue.textContent = currentStreak;
+            if (currentStreak >= 3) {
+                streakBox.classList.add('fire');
+                if (aiCoachPanel) aiCoachPanel.classList.add('level-up');
+            }
         }
         
         playCompletionSound();
@@ -296,6 +343,15 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 // Interrupted hand wash
                 resetProgress();
+                
+                // Reset streak
+                currentStreak = 0;
+                if (streakValue && streakBox) {
+                    streakValue.textContent = currentStreak;
+                    streakBox.classList.remove('fire');
+                    if (aiCoachPanel) aiCoachPanel.classList.remove('level-up');
+                }
+                
                 setAIMessage('interrupted');
             }
         }
@@ -357,6 +413,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 stopWater();
             }
         }
+    }
+
+    // Persona Button Listeners
+    if (personaBtns) {
+        personaBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                if (!isSystemReady) return;
+                personaBtns.forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentPersona = e.target.dataset.persona;
+                if (currentMode === 'after' && !isWaterFlowing && !isWashComplete) {
+                    setAIMessage('idle');
+                }
+            });
+        });
     }
 
     // Event Listeners for Interaction

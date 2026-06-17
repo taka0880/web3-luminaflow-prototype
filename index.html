@@ -29,8 +29,8 @@
                     <span class="mode-desc">従来の自動水栓</span>
                 </button>
                 <button class="mode-btn" data-mode="after">
-                    <span class="mode-label">LuminaFlow V3</span>
-                    <span class="mode-desc">AI手洗いコーチ</span>
+                    <span class="mode-label">LuminaFlow V4</span>
+                    <span class="mode-desc">リテンション検証版</span>
                 </button>
             </div>
 
@@ -65,13 +65,17 @@
                 <div class="dashboard-panel" id="dashboardPanel">
                     <div class="dashboard-header">
                         <h3>Action Record & AI Coach</h3>
-                        <span class="badge">V3 Feature</span>
+                        <span class="badge">V4 Feature</span>
                     </div>
                     <div class="dashboard-content">
                         <div class="dashboard-stats">
                             <div class="stat-box">
                                 <div class="stat-value" id="scoreValue">0</div>
-                                <div class="stat-label">正しい手洗い達成回数</div>
+                                <div class="stat-label">累計達成回数</div>
+                            </div>
+                            <div class="stat-box streak-box">
+                                <div class="stat-value"><span id="streakValue">0</span><span class="flame">🔥</span></div>
+                                <div class="stat-label">連続ストリーク</div>
                             </div>
                             <div class="stat-box">
                                 <div class="stat-value">
@@ -81,7 +85,16 @@
                             </div>
                         </div>
                         
-                        <div class="ai-coach-panel">
+                        <div class="ai-controls">
+                            <span class="control-label">AIコーチ:</span>
+                            <div class="persona-buttons">
+                                <button class="persona-btn active" data-persona="healing">🌱 癒やし</button>
+                                <button class="persona-btn" data-persona="praise">✨ 褒めちぎり</button>
+                                <button class="persona-btn" data-persona="hotblooded">🔥 熱血</button>
+                            </div>
+                        </div>
+                        
+                        <div class="ai-coach-panel" id="aiCoachPanel">
                             <div class="ai-avatar">
                                 <div class="ai-core"></div>
                                 <div class="ai-ring"></div>

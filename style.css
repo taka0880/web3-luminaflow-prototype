@@ -609,6 +609,95 @@ body {
         0% { transform: scale(0.8); opacity: 1; }
         100% { transform: scale(1.3); opacity: 0; }
     }
+
+    /* V4 Features: Streak & Persona */
+    .streak-box {
+        border-color: rgba(245, 158, 11, 0.4);
+        background: rgba(245, 158, 11, 0.05);
+    }
+    
+    .streak-box .stat-value {
+        color: #f59e0b;
+        text-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+    }
+    
+    .flame {
+        font-size: 1.5rem;
+        margin-left: 0.25rem;
+        display: inline-block;
+        transition: transform 0.3s;
+        opacity: 0.5;
+        filter: grayscale(1);
+    }
+    
+    .streak-box.fire .flame {
+        opacity: 1;
+        filter: none;
+        animation: firePulse 0.4s infinite alternate ease-in-out;
+    }
+    
+    @keyframes firePulse {
+        from { transform: scale(1) translateY(0); }
+        to { transform: scale(1.2) translateY(-2px); }
+    }
+    
+    .ai-controls {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 0.5rem;
+        padding-top: 0.5rem;
+        border-top: 1px dashed #334155;
+    }
+    
+    .control-label {
+        font-size: 0.875rem;
+        color: #94a3b8;
+    }
+    
+    .persona-buttons {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    
+    .persona-btn {
+        background: #1e293b;
+        border: 1px solid #334155;
+        color: #cbd5e1;
+        padding: 0.4rem 0.8rem;
+        border-radius: 999px;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .persona-btn:hover {
+        background: #334155;
+    }
+    
+    .persona-btn.active {
+        background: rgba(14, 165, 233, 0.2);
+        color: #38bdf8;
+        border-color: #38bdf8;
+        box-shadow: 0 0 10px rgba(14, 165, 233, 0.3);
+    }
+    
+    /* Level up appearance for high streak */
+    .ai-coach-panel.level-up {
+        background: rgba(245, 158, 11, 0.1);
+        border-color: rgba(245, 158, 11, 0.4);
+    }
+    .ai-coach-panel.level-up .ai-core {
+        background: #fef3c7;
+        box-shadow: 0 0 20px #fbbf24;
+    }
+    .ai-coach-panel.level-up .ai-ring {
+        border-color: #fbbf24;
+    }
+    .ai-coach-panel.level-up .ai-message-box {
+        border-left-color: rgba(251, 191, 36, 0.5);
+    }
     
     @media (max-width: 768px) {
         .pain-gain-cards {

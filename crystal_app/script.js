@@ -6,12 +6,48 @@ document.addEventListener('DOMContentLoaded', () => {
     const dropOrigin = document.getElementById('dropOrigin');
     const rippleContainer = document.getElementById('rippleContainer');
     const levelValue = document.getElementById('levelValue');
+    const streakValue = document.getElementById('streakValue');
     
-    let currentLevel = 1;
-    let currentWidth = 120; // 初期の大きさ
+    // LocalStorageからデータを復元（なければ初期値）
+    let currentLevel = parseInt(localStorage.getItem('crystalLevel')) || 1;
+    let currentWidth = parseInt(localStorage.getItem('crystalWidth')) || 120;
+    let streakDays = parseInt(localStorage.getItem('crystalStreak')) || 1;
+    let lastActionDate = localStorage.getItem('crystalLastDate') || null;
     
-    // 初期幅をセット
+    // UIとスタイルの初期化
+    levelValue.textContent = currentLevel;
+    streakValue.textContent = streakDays;
     document.documentElement.style.setProperty('--crystal-width', currentWidth + 'px');
+    const initHue = (currentLevel * 45) % 360;
+    document.documentElement.style.setProperty('--current-hue', initHue + 'deg');
+
+    // 継続日数の更新ロジック
+    function updateStreak() {
+        const today = new Date().toDateString();
+        if (lastActionDate !== today) {
+            if (lastActionDate) {
+                const lastDate = new Date(lastActionDate);
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                
+                // 最後にアクションしたのが昨日なら+1、それより前なら1にリセット
+                if (lastDate.toDateString() === yesterday.toDateString()) {
+                    streakDays++;
+                } else {
+                    streakDays = 1; 
+                }
+            } else {
+                // 初回
+                streakDays = 1;
+            }
+            lastActionDate = today;
+            streakValue.textContent = streakDays;
+            
+            // 保存
+            localStorage.setItem('crystalStreak', streakDays);
+            localStorage.setItem('crystalLastDate', lastActionDate);
+        }
+    }
 
     // Web Audio API
     let audioCtx = null;
@@ -117,6 +153,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // 大きさを成長させる (1回につき5px大きく、最大300pxまで)
         currentWidth = Math.min(currentWidth + 5, 300);
         document.documentElement.style.setProperty('--crystal-width', currentWidth + 'px');
+        
+        // データの保存とストリーク更新
+        localStorage.setItem('crystalLevel', currentLevel);
+        localStorage.setItem('crystalWidth', currentWidth);
+        updateStreak();
     }
 
     // イベントリスナー

@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const streakValue = document.getElementById('streakValue');
     const streakBox = document.querySelector('.streak-box');
     const personaBtns = document.querySelectorAll('.persona-btn');
+    const shareBtn = document.getElementById('shareBtn');
 
     // State
     let currentMode = 'before'; // 'before' or 'after'
@@ -273,6 +274,9 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (streakValue && streakBox) {
             streakValue.textContent = currentStreak;
+            if (currentStreak >= 1 && shareBtn) {
+                shareBtn.classList.remove('hidden');
+            }
             if (currentStreak >= 3) {
                 streakBox.classList.add('fire');
                 if (aiCoachPanel) aiCoachPanel.classList.add('level-up');
@@ -427,6 +431,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     setAIMessage('idle');
                 }
             });
+        });
+    }
+
+    // Share Button Listener
+    if (shareBtn) {
+        shareBtn.addEventListener('click', () => {
+            const personaName = document.querySelector('.persona-btn.active').textContent.replace(/[^\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/g, '').trim();
+            const text = `次世代スマート蛇口「LuminaFlow」で手を洗い、🔥${currentStreak}連続ストリーク🔥を達成！\nAIコーチ（${personaName}）も応援してくれました✨\n\n#LuminaFlow #スマート蛇口`;
+            const url = encodeURIComponent(window.location.href);
+            const intentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${url}`;
+            window.open(intentUrl, '_blank');
         });
     }
 

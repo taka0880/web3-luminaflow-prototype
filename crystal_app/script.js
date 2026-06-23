@@ -18,8 +18,43 @@ document.addEventListener('DOMContentLoaded', () => {
     levelValue.textContent = currentLevel;
     streakValue.textContent = streakDays;
     document.documentElement.style.setProperty('--crystal-width', currentWidth + 'px');
-    const initHue = (currentLevel * 45) % 360;
-    document.documentElement.style.setProperty('--current-hue', initHue + 'deg');
+    
+    // 追加されていく色のパレット (美しい魔法の色)
+    const colorPalette = [
+        '#38bdf8', // 1: Cyan
+        '#818cf8', // 2: Indigo
+        '#a855f7', // 3: Purple
+        '#f472b6', // 4: Pink
+        '#fbbf24', // 5: Amber/Gold
+        '#34d399', // 6: Emerald
+        '#fb7185', // 7: Rose
+        '#38bdf8'  // 8: Loop back
+    ];
+
+    function updateCrystalVisuals() {
+        // 現在のレベルに応じてパレットから色を取得（最大数を超えたらループ）
+        const activeColors = [];
+        for (let i = 0; i < currentLevel; i++) {
+            activeColors.push(colorPalette[i % colorPalette.length]);
+        }
+        
+        // 色が一つの場合は単色、複数の場合は下から上へのグラデーション
+        let gradient = activeColors[0];
+        if (activeColors.length > 1) {
+            // CSSのlinear-gradientで色が積み重なるように表現
+            gradient = `linear-gradient(to top, ${activeColors.join(', ')})`;
+        }
+        
+        document.documentElement.style.setProperty('--crystal-gradient', gradient);
+        
+        // 一番新しい色をグロウエフェクトに適用（透明度付き）
+        const latestColor = activeColors[activeColors.length - 1];
+        // 簡易的なHex -> rgba変換（実際にはCSS変数を上書き）
+        document.documentElement.style.setProperty('--glow-color', latestColor);
+    }
+    
+    // 初期ビジュアルセット
+    updateCrystalVisuals();
 
     // 継続日数の更新ロジック
     function updateStreak() {
@@ -146,12 +181,11 @@ document.addEventListener('DOMContentLoaded', () => {
         currentLevel++;
         levelValue.textContent = currentLevel;
         
-        // 色を変化させる (Hue Rotate)
-        const hueValue = (currentLevel * 45) % 360;
-        document.documentElement.style.setProperty('--current-hue', hueValue + 'deg');
+        // 色を追加していく
+        updateCrystalVisuals();
 
-        // 大きさを成長させる (1回につき5px大きく、最大300pxまで)
-        currentWidth = Math.min(currentWidth + 5, 300);
+        // 大きさを成長させる (1回につき2px大きく、最大300pxまで)
+        currentWidth = Math.min(currentWidth + 2, 300);
         document.documentElement.style.setProperty('--crystal-width', currentWidth + 'px');
         
         // データの保存とストリーク更新

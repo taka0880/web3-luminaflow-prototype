@@ -5,7 +5,8 @@
     --panel-bg: #1e293b;
     --text-main: #f8fafc;
     --text-sub: #94a3b8;
-    --current-hue: 0deg; /* 動的にJSから変更される */
+    --crystal-gradient: #38bdf8; /* 動的に追加される色 */
+    --glow-color: rgba(56, 189, 248, 0.6);
 }
 
 * {
@@ -140,7 +141,7 @@ body {
 /* 結晶 (AI生成画像) */
 .crystal-area {
     position: absolute;
-    bottom: 2rem; /* 画面下からの位置 */
+    bottom: 2rem; 
     display: flex;
     justify-content: center;
     align-items: center;
@@ -148,26 +149,56 @@ body {
     height: 350px;
 }
 
-.crystal-img {
-    width: var(--crystal-width, 120px); /* JSで動的に変更 */
+.crystal-wrapper {
+    position: relative;
+    width: var(--crystal-width, 120px);
     height: auto;
-    /* 背景が黒(#000)の画像を、背景に合成して黒を透過させる魔法のCSS */
     mix-blend-mode: screen;
-    transform-origin: center center;
-    transition: width 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 1.5s ease-in-out;
+    transition: width 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     z-index: 2;
-    /* 色をJSで変えるための変数 */
-    filter: hue-rotate(var(--current-hue));
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.crystal-img.absorb {
-    animation: crystalImgPulse 0.8s ease-out;
+.crystal-img {
+    width: 100%;
+    height: auto;
+    display: block;
 }
 
-@keyframes crystalImgPulse {
-    0% { transform: scale(1); filter: brightness(1) hue-rotate(var(--current-hue)); }
-    50% { transform: scale(1.1) translateY(-10px); filter: brightness(1.5) hue-rotate(var(--current-hue)); }
-    100% { transform: scale(1); filter: brightness(1) hue-rotate(var(--current-hue)); }
+.color-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    mix-blend-mode: color; /* 下の画像（クリスタル）の色相を上書きする */
+    background: var(--crystal-gradient);
+    opacity: 0.8;
+}
+
+.crystal-wrapper.absorb {
+    animation: wrapperPulse 0.8s ease-out;
+}
+
+@keyframes wrapperPulse {
+    0% { transform: scale(1); filter: brightness(1); }
+    50% { transform: scale(1.1) translateY(-10px); filter: brightness(1.5); }
+    100% { transform: scale(1); filter: brightness(1); }
+}
+
+.crystal-glow {
+    position: absolute;
+    bottom: 10px;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, var(--glow-color) 0%, transparent 70%);
+    filter: blur(20px);
+    opacity: 0.4;
+    transition: all 1.5s ease-in-out;
+    z-index: 1;
+}
+
+.crystal-glow.absorb {
+    animation: glowPulse 0.8s ease-out;
 }
 
 /* 波紋エフェクト強化 */

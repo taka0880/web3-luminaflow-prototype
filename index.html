@@ -2,135 +2,63 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LuminaFlow - 光が導く、次世代のスマート蛇口</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CrystalLog - 成長の結晶</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700&family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header class="hero">
-        <div class="hero-content">
-            <h1 class="logo">LuminaFlow</h1>
-            <p class="tagline">どこに手を出すか、迷わない。<br>かざした瞬間に、心地よい体験を。</p>
-        </div>
-    </header>
-
-    <main>
-        <section class="demo-section">
-            <div class="demo-header">
-                <h2>Interactive Demo</h2>
-                <p>画面上のシンクにマウス（または指）をかざして、従来品との違いを体験してください。</p>
-                <button id="startAudioBtn" class="audio-btn">デモを開始する（音が出ます）</button>
+    <div class="mobile-app">
+        
+        <!-- 上部：鍾乳洞と結晶のステージ -->
+        <div class="cave-stage" id="stage">
+            
+            <div class="top-info">
+                <div class="level-badge">LEVEL <span id="levelValue">1</span></div>
+                <div class="streak-badge">🔥 <span id="streakValue">1</span>日目</div>
+                <button class="log-btn" id="openLogBtn">📜 記録</button>
             </div>
 
-            <div class="controls disabled" id="modeControls">
-                <button class="mode-btn active" data-mode="before">
-                    <span class="mode-label">Before</span>
-                    <span class="mode-desc">従来の自動水栓</span>
-                </button>
-                <button class="mode-btn" data-mode="after">
-                    <span class="mode-label">LuminaFlow V5</span>
-                    <span class="mode-desc">シェア・バイラル検証版</span>
-                </button>
+            <!-- 天井の雫の発生源 (背景画像に鍾乳石が含まれるため非表示) -->
+            <div class="stalactite-area">
+                <div class="drop-origin" id="dropOrigin"></div>
             </div>
 
-            <div class="simulator-container disabled" id="simulator">
-                <div class="sink">
-                    <div class="faucet">
-                        <div class="faucet-head">
-                            <div class="water-stream" id="waterStream"></div>
-                        </div>
-                    </div>
-                    
-                    <!-- Afterモードのみ表示される光のガイド -->
-                    <div class="light-guide" id="lightGuide">
-                        <div class="guide-rings"></div>
-                        <svg class="progress-ring" width="200" height="200">
-                            <circle class="progress-ring-circle" id="progressRing" stroke="#0ea5e9" stroke-width="6" fill="transparent" r="90" cx="100" cy="100" stroke-dasharray="565.48" stroke-dashoffset="565.48"/>
-                        </svg>
-                        <div class="guide-text" id="guideText">ここにかざす</div>
-                    </div>
-
-                    <!-- センサー判定エリア -->
-                    <div class="sensor-area" id="sensorArea"></div>
-                </div>
-
-                <div class="status-panel">
-                    <div class="status-indicator">
-                        <div class="indicator-dot" id="sensorDot"></div>
-                        <span id="statusText">待機中...</span>
-                    </div>
-                </div>
-                
-                <div class="dashboard-panel" id="dashboardPanel">
-                    <div class="dashboard-header">
-                        <h3>Action Record & AI Coach</h3>
-                        <div class="header-badges">
-                            <span class="badge">V5 Feature</span>
-                            <button id="shareBtn" class="share-btn hidden">𝕏 でシェア</button>
-                        </div>
-                    </div>
-                    <div class="dashboard-content">
-                        <div class="dashboard-stats">
-                            <div class="stat-box">
-                                <div class="stat-value" id="scoreValue">0</div>
-                                <div class="stat-label">累計達成回数</div>
-                            </div>
-                            <div class="stat-box streak-box">
-                                <div class="stat-value"><span id="streakValue">0</span><span class="flame">🔥</span></div>
-                                <div class="stat-label">連続ストリーク</div>
-                            </div>
-                            <div class="stat-box">
-                                <div class="stat-value">
-                                    <span id="waterSavedValue">0.0</span> <span class="unit">L</span>
-                                </div>
-                                <div class="stat-label">節水量（想定）</div>
-                            </div>
-                        </div>
-                        
-                        <div class="ai-controls">
-                            <span class="control-label">AIコーチ:</span>
-                            <div class="persona-buttons">
-                                <button class="persona-btn active" data-persona="healing">🌱 癒やし</button>
-                                <button class="persona-btn" data-persona="praise">✨ 褒めちぎり</button>
-                                <button class="persona-btn" data-persona="hotblooded">🔥 熱血</button>
-                            </div>
-                        </div>
-                        
-                        <div class="ai-coach-panel" id="aiCoachPanel">
-                            <div class="ai-avatar">
-                                <div class="ai-core"></div>
-                                <div class="ai-ring"></div>
-                            </div>
-                            <div class="ai-message-box">
-                                <p id="aiMessage">AIコーチが待機中... 手をかざして手洗いを始めてください。</p>
-                            </div>
-                        </div>
-                    </div>
+            <!-- 成長する結晶 (AI生成画像を使用) -->
+            <div class="crystal-area">
+                <div class="crystal-glow" id="crystalGlow"></div>
+                <div class="crystal-wrapper" id="mainCrystal">
+                    <img src="crystal.png" alt="Crystal" class="crystal-img">
+                    <div class="color-overlay"></div>
                 </div>
             </div>
             
-            <div class="pain-gain-cards">
-                <div class="card pain-card">
-                    <h3>Beforeのストレス (Pains)</h3>
-                    <ul>
-                        <li>センサー位置が分からず手を振る</li>
-                        <li>なかなか水が出ず無視されている感覚</li>
-                        <li>最初に出る水が冷たい/熱すぎる</li>
-                    </ul>
-                </div>
-                <div class="card gain-card">
-                    <h3>LuminaFlowの価値 (Gains)</h3>
-                    <ul>
-                        <li>光ガイドで手を出す位置がひと目で分かる</li>
-                        <li>面検知センサーで空振りゼロ、即座に反応</li>
-                        <li>検知音でシステムが認識した安心感</li>
-                        <li>配管内排出機能で最初から適温（想定）</li>
-                    </ul>
+            <!-- 波紋用コンテナ -->
+            <div class="ripple-container" id="rippleContainer"></div>
+        </div>
+
+        <!-- 下部：成長入力パネル -->
+        <div class="bottom-panel">
+            <div class="action-area">
+                <p class="action-title">今日の自己成長を記録する</p>
+                <div class="input-group">
+                    <input type="text" id="growthInput" placeholder="例: 本を30分読んだ" autocomplete="off">
+                    <button class="translate-btn" id="dropBtn">雫</button>
                 </div>
             </div>
-        </section>
-    </main>
+        </div>
+
+        <!-- ログモーダル -->
+        <div class="log-modal" id="logModal">
+            <div class="log-modal-header">
+                <h3>成長の軌跡</h3>
+                <button class="close-btn" id="closeLogBtn">×</button>
+            </div>
+            <div class="log-list-container" id="logListContainer">
+                <!-- ログアイテムがここに追加される -->
+            </div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>

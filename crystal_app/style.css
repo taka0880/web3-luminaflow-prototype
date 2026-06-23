@@ -1,0 +1,249 @@
+:root {
+    --bg-dark: #020617;
+    --primary: #38bdf8;
+    --primary-glow: rgba(56, 189, 248, 0.6);
+    --panel-bg: #1e293b;
+    --text-main: #f8fafc;
+    --text-sub: #94a3b8;
+    --current-hue: 0deg; /* 動的にJSから変更される */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #000;
+    color: var(--text-main);
+    font-family: 'Noto Sans JP', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* スマホアプリ風コンテナ */
+.mobile-app {
+    width: 100%;
+    max-width: 430px;
+    height: 100%;
+    max-height: 932px;
+    background: var(--bg-dark);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 50px rgba(0,0,0,0.5);
+}
+
+/* --- 鍾乳洞ステージ (背景画像) --- */
+.cave-stage {
+    flex: 1;
+    position: relative;
+    /* AI生成した高画質な鍾乳洞画像を使用 */
+    background-image: url('cave_bg.png');
+    background-size: cover;
+    background-position: center bottom;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-bottom: 2px solid #334155;
+    /* 少し暗くして文字や結晶を目立たせる */
+    box-shadow: inset 0 0 100px rgba(0,0,0,0.8);
+}
+
+.top-info {
+    position: absolute;
+    top: 2rem;
+    z-index: 20;
+}
+
+.level-badge {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 0.5rem 1.5rem;
+    border-radius: 999px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(4px);
+}
+
+/* 天井の雫発生源 */
+.stalactite-area {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    height: 100px; /* 鍾乳石画像の長さに合わせる */
+}
+
+.drop-origin {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* 改良版・雫のアニメーション */
+.drop {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 15px #fff, 0 0 30px var(--primary);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 15;
+}
+
+/* 雫の軌跡（光の尾） */
+.drop::after {
+    content: '';
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 40px;
+    background: linear-gradient(to top, rgba(255,255,255,0.8), transparent);
+    border-radius: 2px;
+}
+
+/* アニメーションを画面の高さに合わせて調整 */
+@keyframes fall {
+    0% { top: 0; opacity: 0; transform: translateX(-50%) scale(0.5); }
+    10% { opacity: 1; transform: translateX(-50%) scale(1); }
+    80% { opacity: 1; }
+    100% { top: calc(100vh - 400px); opacity: 0; transform: translateX(-50%) scale(0.5); } /* 落ちる先を結晶の中心あたりに調整 */
+}
+
+/* 結晶 (AI生成画像) */
+.crystal-area {
+    position: absolute;
+    bottom: 2rem; /* 画面下からの位置 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 350px;
+}
+
+.crystal-img {
+    width: var(--crystal-width, 120px); /* JSで動的に変更 */
+    height: auto;
+    /* 背景が黒(#000)の画像を、背景に合成して黒を透過させる魔法のCSS */
+    mix-blend-mode: screen;
+    transform-origin: center center;
+    transition: width 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 1.5s ease-in-out;
+    z-index: 2;
+    /* 色をJSで変えるための変数 */
+    filter: hue-rotate(var(--current-hue));
+}
+
+.crystal-img.absorb {
+    animation: crystalImgPulse 0.8s ease-out;
+}
+
+@keyframes crystalImgPulse {
+    0% { transform: scale(1); filter: brightness(1) hue-rotate(var(--current-hue)); }
+    50% { transform: scale(1.1) translateY(-10px); filter: brightness(1.5) hue-rotate(var(--current-hue)); }
+    100% { transform: scale(1); filter: brightness(1) hue-rotate(var(--current-hue)); }
+}
+
+/* 波紋エフェクト強化 */
+.ripple-container {
+    position: absolute;
+    bottom: 5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 50px;
+    z-index: 5;
+    perspective: 600px;
+}
+
+.ripple {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotateX(70deg);
+    border-radius: 50%;
+    border: 3px solid rgba(255,255,255,0.9);
+    box-shadow: 0 0 20px rgba(255,255,255,0.8), inset 0 0 20px rgba(255,255,255,0.5);
+    width: 0;
+    height: 0;
+    opacity: 1;
+    animation: rippleEffect 1.2s ease-out forwards;
+}
+
+@keyframes rippleEffect {
+    to { width: 300px; height: 300px; opacity: 0; border-width: 0px; }
+}
+
+/* --- 下部パネル --- */
+.bottom-panel {
+    background: var(--panel-bg);
+    padding: 2rem 1.5rem;
+    box-shadow: 0 -10px 30px rgba(0,0,0,0.8);
+    z-index: 30;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+/* アクションエリア */
+.action-title {
+    font-size: 0.9rem;
+    color: var(--text-main);
+    margin-bottom: 1rem;
+    text-align: center;
+    font-weight: bold;
+}
+
+.input-group {
+    display: flex;
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 999px;
+    padding: 0.5rem;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+}
+
+.input-group input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    outline: none;
+}
+
+.input-group input::placeholder {
+    color: #475569;
+}
+
+.translate-btn {
+    background: linear-gradient(135deg, var(--primary), #8b5cf6);
+    color: white;
+    border: none;
+    width: 50px;
+    height: 40px;
+    border-radius: 999px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.2s;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+}
+
+.translate-btn:active {
+    transform: scale(0.9);
+}

@@ -10,9 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const logModal = document.getElementById('logModal');
     const logListContainer = document.getElementById('logListContainer');
     
-    // LocalStorageからデータを復元（なければ初期値）
-    let currentLevel = parseInt(localStorage.getItem('crystalLevel')) || 1;
-    let currentWidth = parseInt(localStorage.getItem('crystalWidth')) || 120;
+    // LocalStorageからデータを復元（レベルと大きさは毎回リセット）
+    let currentLevel = 1;
+    let currentWidth = 120;
     let streakDays = parseInt(localStorage.getItem('crystalStreak')) || 1;
     let lastActionDate = localStorage.getItem('crystalLastDate') || null;
     let growthLogs = JSON.parse(localStorage.getItem('crystalLogs')) || [];
@@ -212,9 +212,7 @@ function handleAction() {
         currentWidth = Math.min(currentWidth + 2, 300);
         document.documentElement.style.setProperty('--crystal-width', currentWidth + 'px');
         
-        // データの保存とストリーク更新
-        localStorage.setItem('crystalLevel', currentLevel);
-        localStorage.setItem('crystalWidth', currentWidth);
+        // データの保存とストリーク更新（レベル等は保存しない）
         updateStreak();
     }
 

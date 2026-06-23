@@ -16,6 +16,7 @@
             <div class="top-info">
                 <div class="level-badge">LEVEL <span id="levelValue">1</span></div>
                 <div class="streak-badge">🔥 <span id="streakValue">1</span>日目</div>
+                <button class="log-btn" id="openLogBtn">📜 記録</button>
             </div>
 
             <!-- 天井の雫の発生源 (背景画像に鍾乳石が含まれるため非表示) -->
@@ -44,6 +45,17 @@
                     <input type="text" id="growthInput" placeholder="例: 本を30分読んだ" autocomplete="off">
                     <button class="translate-btn" id="dropBtn">雫</button>
                 </div>
+            </div>
+        </div>
+
+        <!-- ログモーダル -->
+        <div class="log-modal" id="logModal">
+            <div class="log-modal-header">
+                <h3>成長の軌跡</h3>
+                <button class="close-btn" id="closeLogBtn">×</button>
+            </div>
+            <div class="log-list-container" id="logListContainer">
+                <!-- ログアイテムがここに追加される -->
             </div>
         </div>
     </div>

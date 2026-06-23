@@ -3,16 +3,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const btn = document.getElementById('dropBtn');
     const crystal = document.getElementById('mainCrystal');
     const glow = document.getElementById('crystalGlow');
-    const dropOrigin = document.getElementById('dropOrigin');
-    const rippleContainer = document.getElementById('rippleContainer');
     const levelValue = document.getElementById('levelValue');
     const streakValue = document.getElementById('streakValue');
+    const openLogBtn = document.getElementById('openLogBtn');
+    const closeLogBtn = document.getElementById('closeLogBtn');
+    const logModal = document.getElementById('logModal');
+    const logListContainer = document.getElementById('logListContainer');
     
     // LocalStorageからデータを復元（なければ初期値）
     let currentLevel = parseInt(localStorage.getItem('crystalLevel')) || 1;
     let currentWidth = parseInt(localStorage.getItem('crystalWidth')) || 120;
     let streakDays = parseInt(localStorage.getItem('crystalStreak')) || 1;
     let lastActionDate = localStorage.getItem('crystalLastDate') || null;
+    let growthLogs = JSON.parse(localStorage.getItem('crystalLogs')) || [];
     
     // UIとスタイルの初期化
     levelValue.textContent = currentLevel;
@@ -129,16 +132,31 @@ document.addEventListener('DOMContentLoaded', () => {
             gain.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime + 0.1 + (i * 0.1));
             gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
             
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start(audioCtx.currentTime + (i * 0.1));
-            osc.stop(audioCtx.currentTime + duration);
-        });
-    }
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(audioCtx.currentTime + (i * 0.1));
+        osc.stop(audioCtx.currentTime + duration);
+    });
+}
 
-    function handleAction() {
-        const text = input.value.trim();
-        if (!text) return;
+function renderLogs() {
+    logListContainer.innerHTML = '';
+    if (growthLogs.length === 0) {
+        logListContainer.innerHTML = '<p style="text-align:center; color:#64748b; margin-top:2rem;">まだ記録がありません</p>';
+        return;
+    }
+    growthLogs.forEach(log => {
+        const div = document.createElement('div');
+        div.className = 'log-item';
+        // その時点のレベルの色を左端のボーダー色にすることも可能だが、今回は一律primaryカラーに
+        div.innerHTML = `<div class="log-date">${log.date}</div><div class="log-text">${log.text}</div>`;
+        logListContainer.appendChild(div);
+    });
+}
+
+function handleAction() {
+    const text = input.value.trim();
+    if (!text) return;
 
         initAudio();
         input.value = '';
@@ -153,6 +171,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // 到達時処理
         setTimeout(() => {
             drop.remove();
+            
+            // ログの保存
+            const now = new Date();
+            const dateStr = `${now.getMonth()+1}/${now.getDate()} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+            growthLogs.unshift({ date: dateStr, text: text });
+            localStorage.setItem('crystalLogs', JSON.stringify(growthLogs));
             
             // アニメーションリスタート
             crystal.classList.remove('absorb');
@@ -200,5 +224,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'Enter') {
             handleAction();
         }
+    });
+
+    openLogBtn.addEventListener('click', () => {
+        renderLogs();
+        logModal.classList.add('show');
+    });
+
+    closeLogBtn.addEventListener('click', () => {
+        logModal.classList.remove('show');
     });
 });

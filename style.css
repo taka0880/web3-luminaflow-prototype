@@ -119,13 +119,13 @@ body {
     left: 50%;
     transform: translateX(-50%);
     z-index: 15;
-    animation: fall 2s ease-in forwards;
+    animation: fall 1s ease-in forwards;
 }
 
 /* 罪悪感用の雫 */
 .drop.guilt {
-    background: #e9d5ff; /* 明るい紫 */
-    box-shadow: 0 0 15px #e9d5ff, 0 0 40px #9333ea;
+    background: #fef08a; /* 明るい黄色 */
+    box-shadow: 0 0 15px #fef08a, 0 0 40px #eab308;
 }
 
 /* 雫の軌跡（光の尾） */
@@ -142,7 +142,7 @@ body {
 }
 
 .drop.guilt::after {
-    background: linear-gradient(to top, #9333ea, transparent);
+    background: linear-gradient(to top, #eab308, transparent);
 }
 
 /* アニメーションを画面の高さに合わせて調整 */
@@ -309,8 +309,8 @@ body {
 }
 
 .guilt-btn {
-    background: linear-gradient(135deg, #7e22ce, #4c1d95);
-    box-shadow: 0 0 10px rgba(126, 34, 206, 0.4);
+    background: linear-gradient(135deg, #eab308, #ca8a04);
+    box-shadow: 0 0 10px rgba(234, 179, 8, 0.4);
 }
 
 /* --- タイマー＆ログボタン --- */

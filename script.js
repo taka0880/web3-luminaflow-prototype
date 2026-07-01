@@ -236,7 +236,7 @@ function renderLogs() {
             const reply = getAiResponse(type);
             showAiMessage(reply);
 
-        }, 2000);
+        }, 1000);
     }
 
     function formatTime(seconds) {

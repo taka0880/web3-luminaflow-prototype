@@ -111,11 +111,11 @@ body {
 /* 改良版・雫のアニメーション */
 .drop {
     position: absolute;
-    width: 8px;
-    height: 8px;
-    background: #fff;
+    width: 12px;
+    height: 12px;
+    background: #bae6fd; /* 明るい水色 */
     border-radius: 50%;
-    box-shadow: 0 0 15px #fff, 0 0 30px var(--primary);
+    box-shadow: 0 0 15px #bae6fd, 0 0 40px var(--primary);
     left: 50%;
     transform: translateX(-50%);
     z-index: 15;
@@ -123,24 +123,25 @@ body {
 
 /* 罪悪感用の雫 */
 .drop.guilt {
-    box-shadow: 0 0 15px #fff, 0 0 30px #a855f7;
+    background: #e9d5ff; /* 明るい紫 */
+    box-shadow: 0 0 15px #e9d5ff, 0 0 40px #9333ea;
 }
 
 /* 雫の軌跡（光の尾） */
 .drop::after {
     content: '';
     position: absolute;
-    top: -40px;
+    top: -50px;
     left: 50%;
     transform: translateX(-50%);
-    width: 2px;
-    height: 40px;
-    background: linear-gradient(to top, rgba(255,255,255,0.8), transparent);
+    width: 4px;
+    height: 50px;
+    background: linear-gradient(to top, var(--primary), transparent);
     border-radius: 2px;
 }
 
 .drop.guilt::after {
-    background: linear-gradient(to top, rgba(168, 85, 247, 0.8), transparent);
+    background: linear-gradient(to top, #9333ea, transparent);
 }
 
 /* アニメーションを画面の高さに合わせて調整 */

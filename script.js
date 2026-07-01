@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const input = document.getElementById('growthInput');
-    const btn = document.getElementById('dropBtn');
+    const btnEffort = document.getElementById('dropBtnEffort');
+    const btnGuilt = document.getElementById('dropBtnGuilt');
     const crystal = document.getElementById('mainCrystal');
     const glow = document.getElementById('crystalGlow');
     const dropOrigin = document.getElementById('dropOrigin');
@@ -163,24 +164,28 @@ function renderLogs() {
     });
 }
 
-// AI Logic (Keywords and Replies)
-    const aiRules = [
-        { words: ['スマホ', 'sns', 'youtube', 'tiktok', '動画'], replies: ['脳を休ませる時間も大切です。またここから始めましょう！', 'インプットの時間は終わりました。さあ、アウトプットの結晶を育てましょう。'] },
-        { words: ['寝坊', '二度寝', 'サボ', '怠け', 'だらだら'], replies: ['体が休息を求めていた証拠です。自分を責めず、今からの行動を褒めてあげてくださいね。', '今このアプリを開いたこと自体が大きな一歩です。素晴らしい！'] },
-        { words: ['勉強', '読書', '筋トレ', '仕事', '学習', 'ポモドーロ'], replies: ['素晴らしい努力です！その行動が確実に結晶を輝かせています。', '継続は力なり。今日の積み重ねが未来のあなたを作ります！', '最高です！この調子で成長の雫を貯めていきましょう。'] }
+// AI Logic (Separated by Action Type)
+    const effortReplies = [
+        '素晴らしい努力です！その行動が確実に結晶を輝かせています。', 
+        '継続は力なり。今日の積み重ねが未来のあなたを作ります！', 
+        '最高です！この調子で成長の雫を貯めていきましょう。',
+        'その行動があなたの魅力的な結晶を育てています！'
     ];
-    const defaultReplies = ['その行動があなたの魅力的な結晶を育てています！', '過去は変えられませんが、今の行動は選べます。ナイスです！', '良いペースです。自分を褒めてあげてくださいね。'];
+    
+    const guiltReplies = [
+        '脳を休ませる時間も大切です。またここから始めましょう！', 
+        'インプットの時間は終わりました。さあ、アウトプットの結晶を育てましょう。',
+        '体が休息を求めていた証拠です。自分を責めず、今からの行動を褒めてあげてくださいね。', 
+        '今このアプリを開いて記録したこと自体が、大きな一歩です。素晴らしい！',
+        '過去は変えられませんが、今の行動は選べます。ナイスです！'
+    ];
 
-    function getAiResponse(text) {
-        let response = defaultReplies[Math.floor(Math.random() * defaultReplies.length)];
-        const lowerText = text.toLowerCase();
-        for (const rule of aiRules) {
-            if (rule.words.some(w => lowerText.includes(w))) {
-                response = rule.replies[Math.floor(Math.random() * rule.replies.length)];
-                break; // 最初のマッチで終了
-            }
+    function getAiResponse(type) {
+        if (type === 'guilt') {
+            return guiltReplies[Math.floor(Math.random() * guiltReplies.length)];
+        } else {
+            return effortReplies[Math.floor(Math.random() * effortReplies.length)];
         }
-        return response;
     }
 
     function showAiMessage(msg) {
@@ -191,7 +196,7 @@ function renderLogs() {
         }, 6000); // 6秒後に消える
     }
 
-    function handleAction(isPomodoro = false, forcedText = null) {
+    function handleAction(type = 'effort', isPomodoro = false, forcedText = null) {
         const text = forcedText !== null ? forcedText : input.value.trim();
         if (!text && !isPomodoro) return;
 
@@ -203,7 +208,7 @@ function renderLogs() {
 
         // 雫アニメーション
         const drop = document.createElement('div');
-        drop.className = 'drop';
+        drop.className = `drop ${type}`;
         dropOrigin.appendChild(drop);
         playDropSound();
 
@@ -228,7 +233,7 @@ function renderLogs() {
             levelUp();
 
             // AIメッセージ表示
-            const reply = getAiResponse(text);
+            const reply = getAiResponse(type);
             showAiMessage(reply);
 
         }, 900);
@@ -265,8 +270,8 @@ function renderLogs() {
                     pomodoroBtn.textContent = '🍅 25:00';
                     pomodoroBtn.classList.remove('active');
                     crystal.style.animation = '';
-                    // ポモドーロ完了時、自動で大きく成長
-                    handleAction(true, "ポモドーロ（25分集中）を完了した！");
+                    // ポモドーロ完了時、自動で大きく成長（努力扱い）
+                    handleAction('effort', true, "ポモドーロ（25分集中）を完了した！");
                 }
             }, 1000);
         }
@@ -298,10 +303,13 @@ function renderLogs() {
     }
 
     // イベントリスナー
-    btn.addEventListener('click', () => handleAction(false));
+    btnEffort.addEventListener('click', () => handleAction('effort'));
+    btnGuilt.addEventListener('click', () => handleAction('guilt'));
+    
     input.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
-            handleAction(false);
+            // エンターキーの場合はデフォルトで努力とする
+            handleAction('effort');
         }
     });
 

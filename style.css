@@ -119,6 +119,7 @@ body {
     left: 50%;
     transform: translateX(-50%);
     z-index: 15;
+    animation: fall 2s ease-in forwards;
 }
 
 /* 罪悪感用の雫 */

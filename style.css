@@ -61,7 +61,11 @@ body {
     top: 2rem;
     z-index: 20;
     display: flex;
-    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0 1rem;
 }
 
 .level-badge {
@@ -291,6 +295,58 @@ body {
 
 .translate-btn:active {
     transform: scale(0.9);
+}
+
+/* --- タイマー＆ログボタン --- */
+.pomodoro-btn,
+.log-btn {
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    font-weight: bold;
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+    transition: all 0.2s;
+    font-size: 0.8rem;
+}
+
+.pomodoro-btn:active,
+.log-btn:active { 
+    transform: scale(0.95); 
+}
+
+.pomodoro-btn.active {
+    background: rgba(220, 38, 38, 0.5);
+    border-color: #ef4444;
+}
+
+/* --- AIメッセージ --- */
+.ai-message {
+    position: absolute;
+    bottom: 270px; /* 結晶の上部付近 */
+    color: white;
+    font-size: 0.85rem;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 1rem 1.5rem;
+    border-radius: 16px;
+    border-left: 4px solid var(--primary);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s ease-out;
+    pointer-events: none;
+    z-index: 25;
+    white-space: pre-wrap;
+    text-align: center;
+    max-width: 80%;
+}
+
+.ai-message.show {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* --- ログボタン --- */

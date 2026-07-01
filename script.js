@@ -3,12 +3,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const btn = document.getElementById('dropBtn');
     const crystal = document.getElementById('mainCrystal');
     const glow = document.getElementById('crystalGlow');
+    const dropOrigin = document.getElementById('dropOrigin');
+    const rippleContainer = document.getElementById('rippleContainer');
     const levelValue = document.getElementById('levelValue');
     const streakValue = document.getElementById('streakValue');
     const openLogBtn = document.getElementById('openLogBtn');
     const closeLogBtn = document.getElementById('closeLogBtn');
     const logModal = document.getElementById('logModal');
     const logListContainer = document.getElementById('logListContainer');
+    const pomodoroBtn = document.getElementById('pomodoroBtn');
+    const aiMessage = document.getElementById('aiMessage');
+    
+    // Pomodoro State
+    let timerInterval = null;
+    let timeLeft = 25 * 60; // 25 minutes
+    let isTimerRunning = false;
     
     // LocalStorageからデータを復元（レベルと大きさは毎回リセット）
     let currentLevel = 1;
@@ -154,13 +163,43 @@ function renderLogs() {
     });
 }
 
-function handleAction() {
-    const text = input.value.trim();
-    if (!text) return;
+// AI Logic (Keywords and Replies)
+    const aiRules = [
+        { words: ['スマホ', 'sns', 'youtube', 'tiktok', '動画'], replies: ['脳を休ませる時間も大切です。またここから始めましょう！', 'インプットの時間は終わりました。さあ、アウトプットの結晶を育てましょう。'] },
+        { words: ['寝坊', '二度寝', 'サボ', '怠け', 'だらだら'], replies: ['体が休息を求めていた証拠です。自分を責めず、今からの行動を褒めてあげてくださいね。', '今このアプリを開いたこと自体が大きな一歩です。素晴らしい！'] },
+        { words: ['勉強', '読書', '筋トレ', '仕事', '学習', 'ポモドーロ'], replies: ['素晴らしい努力です！その行動が確実に結晶を輝かせています。', '継続は力なり。今日の積み重ねが未来のあなたを作ります！', '最高です！この調子で成長の雫を貯めていきましょう。'] }
+    ];
+    const defaultReplies = ['その行動があなたの魅力的な結晶を育てています！', '過去は変えられませんが、今の行動は選べます。ナイスです！', '良いペースです。自分を褒めてあげてくださいね。'];
 
-        initAudio();
-        input.value = '';
-        input.blur();
+    function getAiResponse(text) {
+        let response = defaultReplies[Math.floor(Math.random() * defaultReplies.length)];
+        const lowerText = text.toLowerCase();
+        for (const rule of aiRules) {
+            if (rule.words.some(w => lowerText.includes(w))) {
+                response = rule.replies[Math.floor(Math.random() * rule.replies.length)];
+                break; // 最初のマッチで終了
+            }
+        }
+        return response;
+    }
+
+    function showAiMessage(msg) {
+        aiMessage.textContent = msg;
+        aiMessage.classList.add('show');
+        setTimeout(() => {
+            aiMessage.classList.remove('show');
+        }, 6000); // 6秒後に消える
+    }
+
+    function handleAction(isPomodoro = false, forcedText = null) {
+        const text = forcedText !== null ? forcedText : input.value.trim();
+        if (!text && !isPomodoro) return;
+
+        if (!isPomodoro) {
+            initAudio();
+            input.value = '';
+            input.blur();
+        }
 
         // 雫アニメーション
         const drop = document.createElement('div');
@@ -188,7 +227,49 @@ function handleAction() {
             playAbsorbSound();
             levelUp();
 
+            // AIメッセージ表示
+            const reply = getAiResponse(text);
+            showAiMessage(reply);
+
         }, 900);
+    }
+
+    function formatTime(seconds) {
+        const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+        const s = (seconds % 60).toString().padStart(2, '0');
+        return `${m}:${s}`;
+    }
+
+    function toggleTimer() {
+        initAudio();
+        if (isTimerRunning) {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+            pomodoroBtn.textContent = `🍅 ${formatTime(timeLeft)}`;
+            pomodoroBtn.classList.remove('active');
+            crystal.style.animation = ''; // 鼓動停止
+        } else {
+            isTimerRunning = true;
+            pomodoroBtn.classList.add('active');
+            // 集中モード中はクリスタルがゆっくり脈打つ
+            crystal.style.animation = 'wrapperPulse 4s infinite alternate ease-in-out';
+            
+            timerInterval = setInterval(() => {
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    pomodoroBtn.textContent = `🍅 ${formatTime(timeLeft)}`;
+                } else {
+                    clearInterval(timerInterval);
+                    isTimerRunning = false;
+                    timeLeft = 25 * 60;
+                    pomodoroBtn.textContent = '🍅 25:00';
+                    pomodoroBtn.classList.remove('active');
+                    crystal.style.animation = '';
+                    // ポモドーロ完了時、自動で大きく成長
+                    handleAction(true, "ポモドーロ（25分集中）を完了した！");
+                }
+            }, 1000);
+        }
     }
 
     function createRipple() {
@@ -217,12 +298,14 @@ function handleAction() {
     }
 
     // イベントリスナー
-    btn.addEventListener('click', handleAction);
+    btn.addEventListener('click', () => handleAction(false));
     input.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
-            handleAction();
+            handleAction(false);
         }
     });
+
+    pomodoroBtn.addEventListener('click', toggleTimer);
 
     openLogBtn.addEventListener('click', () => {
         renderLogs();

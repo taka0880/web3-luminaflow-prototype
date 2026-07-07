@@ -35,8 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let timeLeft = 25 * 60;
     let isTimerRunning = false;
     
-    let currentLevel = 1;
-    let currentWidth = 120;
+    let currentLevel = parseInt(localStorage.getItem('crystalLevel')) || 1;
+    let currentWidth = parseFloat(localStorage.getItem('crystalWidth')) || 120;
     let streakDays = parseInt(localStorage.getItem('crystalStreak')) || 1;
     let lastActionDate = localStorage.getItem('crystalLastDate') || null;
     let growthLogs = JSON.parse(localStorage.getItem('crystalLogs')) || [];
@@ -223,10 +223,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Level Up
             currentLevel++;
+            localStorage.setItem('crystalLevel', currentLevel);
             levelValue.textContent = currentLevel;
             updateCrystalVisuals();
-            // 大きくなりすぎて画像が荒くならないよう、最大サイズを制限
-            currentWidth = Math.min(currentWidth + 2, 220);
+            
+            // 大きくなりすぎて画像が荒くならないよう、最大サイズを制限しつつ、1回の成長幅を極小（0.5px）にする
+            currentWidth = Math.min(currentWidth + 0.5, 220);
+            localStorage.setItem('crystalWidth', currentWidth);
             document.documentElement.style.setProperty('--crystal-width', currentWidth + 'px');
             updateStreak();
 

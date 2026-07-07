@@ -1,28 +1,37 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const input = document.getElementById('growthInput');
-    const btnEffort = document.getElementById('dropBtnEffort');
-    const btnGuilt = document.getElementById('dropBtnGuilt');
+    // UI Elements
+    const inputEffort = document.getElementById('inputEffort');
+    const btnEffort = document.getElementById('btnEffort');
+    const inputGuilt = document.getElementById('inputGuilt');
+    const btnGuilt = document.getElementById('btnGuilt');
+    
     const crystal = document.getElementById('mainCrystal');
     const glow = document.getElementById('crystalGlow');
     const dropOrigin = document.getElementById('dropOrigin');
     const rippleContainer = document.getElementById('rippleContainer');
+    
     const levelValue = document.getElementById('levelValue');
     const streakValue = document.getElementById('streakValue');
+    
+    const aiMessageCrystal = document.getElementById('aiMessageCrystal');
+    const aiMessageTranslator = document.getElementById('aiMessageTranslator');
+    
+    const translatorMachine = document.getElementById('translatorMachine');
+    const sandStrata = document.getElementById('sandStrata');
+    const navBtns = document.querySelectorAll('.nav-btn');
+    const viewSections = document.querySelectorAll('.view-section');
+
     const openLogBtn = document.getElementById('openLogBtn');
     const closeLogBtn = document.getElementById('closeLogBtn');
     const logModal = document.getElementById('logModal');
     const logListContainer = document.getElementById('logListContainer');
     const pomodoroBtn = document.getElementById('pomodoroBtn');
-    const aiMessage = document.getElementById('aiMessage');
-    const translatorUI = document.getElementById('translatorUI');
-    const sandStrata = document.getElementById('sandStrata');
     
-    // Pomodoro State
+    // State
     let timerInterval = null;
-    let timeLeft = 25 * 60; // 25 minutes
+    let timeLeft = 25 * 60;
     let isTimerRunning = false;
     
-    // LocalStorageからデータを復元（レベルと大きさは毎回リセット）
     let currentLevel = 1;
     let currentWidth = 120;
     let streakDays = parseInt(localStorage.getItem('crystalStreak')) || 1;
@@ -30,74 +39,48 @@ document.addEventListener('DOMContentLoaded', () => {
     let growthLogs = JSON.parse(localStorage.getItem('crystalLogs')) || [];
     let sandLayers = JSON.parse(localStorage.getItem('crystalSand')) || [];
     
-    // UIとスタイルの初期化
+    // Initialize UI
     levelValue.textContent = currentLevel;
     streakValue.textContent = streakDays;
     document.documentElement.style.setProperty('--crystal-width', currentWidth + 'px');
     
-    // 追加されていく色のパレット (美しい魔法の色)
-    const colorPalette = [
-        '#38bdf8', // 1: Cyan
-        '#818cf8', // 2: Indigo
-        '#a855f7', // 3: Purple
-        '#f472b6', // 4: Pink
-        '#fbbf24', // 5: Amber/Gold
-        '#34d399', // 6: Emerald
-        '#fb7185', // 7: Rose
-        '#38bdf8'  // 8: Loop back
-    ];
+    // Colors
+    const colorPalette = ['#38bdf8', '#818cf8', '#a855f7', '#f472b6', '#fbbf24', '#34d399', '#fb7185', '#38bdf8'];
+    const sandColors = ['#fde047', '#fbcfe8', '#a7f3d0', '#bfdbfe', '#ddd6fe', '#fed7aa']; // Pastel for Guilt
 
     function updateCrystalVisuals() {
-        // 現在のレベルに応じてパレットから色を取得（最大数を超えたらループ）
         const activeColors = [];
         for (let i = 0; i < currentLevel; i++) {
             activeColors.push(colorPalette[i % colorPalette.length]);
         }
-        
-        // 色が一つの場合は単色、複数の場合は下から上へのグラデーション
         let gradient = activeColors[0];
         if (activeColors.length > 1) {
-            // CSSのlinear-gradientで色が積み重なるように表現
             gradient = `linear-gradient(to top, ${activeColors.join(', ')})`;
         }
-        
         document.documentElement.style.setProperty('--crystal-gradient', gradient);
-        
-        // 一番新しい色をグロウエフェクトに適用（透明度付き）
         const latestColor = activeColors[activeColors.length - 1];
-        // 簡易的なHex -> rgba変換（実際にはCSS変数を上書き）
         document.documentElement.style.setProperty('--glow-color', latestColor);
     }
-
-    // 砂の地層関連
-    const sandColors = ['#fde047', '#fbcfe8', '#a7f3d0', '#bfdbfe', '#ddd6fe', '#fed7aa'];
-
+    
     function renderSandLayers() {
         sandStrata.innerHTML = '';
-        sandLayers.forEach(color => {
-            addSandLayerToDOM(color);
-        });
+        sandLayers.forEach(color => addSandLayerToDOM(color));
     }
 
     function addSandLayerToDOM(color) {
         const layer = document.createElement('div');
         layer.className = 'sand-layer';
         layer.style.backgroundColor = color;
-        
-        // 自然な地層に見せるためのランダムな傾き
         const waveType = Math.floor(Math.random() * 3);
         if (waveType === 0) layer.style.borderRadius = '50% 50% 0 0 / 100% 100% 0 0';
         if (waveType === 1) layer.style.borderRadius = '100% 0% 0 0 / 100% 0% 0 0';
         if (waveType === 2) layer.style.borderRadius = '0% 100% 0 0 / 0% 100% 0 0';
-        
-        sandStrata.prepend(layer); // 最新の層が上に重なるように
+        sandStrata.prepend(layer);
     }
     
-    // 初期ビジュアルセット
     updateCrystalVisuals();
     renderSandLayers();
 
-    // 継続日数の更新ロジック
     function updateStreak() {
         const today = new Date().toDateString();
         if (lastActionDate !== today) {
@@ -105,35 +88,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 const lastDate = new Date(lastActionDate);
                 const yesterday = new Date();
                 yesterday.setDate(yesterday.getDate() - 1);
-                
-                // 最後にアクションしたのが昨日なら+1、それより前なら1にリセット
                 if (lastDate.toDateString() === yesterday.toDateString()) {
                     streakDays++;
                 } else {
                     streakDays = 1; 
                 }
             } else {
-                // 初回
                 streakDays = 1;
             }
             lastActionDate = today;
             streakValue.textContent = streakDays;
-            
-            // 保存
             localStorage.setItem('crystalStreak', streakDays);
             localStorage.setItem('crystalLastDate', lastActionDate);
         }
     }
 
-    // Web Audio API
+    // Audio
     let audioCtx = null;
     function initAudio() {
-        if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     }
-
-    // 雫の音
     function playDropSound() {
         if (!audioCtx) return;
         const osc = audioCtx.createOscillator();
@@ -141,260 +115,199 @@ document.addEventListener('DOMContentLoaded', () => {
         osc.type = 'sine';
         osc.frequency.setValueAtTime(800, audioCtx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
-        
         gain.gain.setValueAtTime(0, audioCtx.currentTime);
         gain.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 0.02);
         gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
-        
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         osc.start();
         osc.stop(audioCtx.currentTime + 0.2);
     }
-
-    // 吸収・成長の音
     function playAbsorbSound() {
         if (!audioCtx) return;
-        const freqs = [523.25, 659.25, 783.99]; // C, E, G
+        const freqs = [523.25, 659.25, 783.99];
         const duration = 1.5;
-        
         freqs.forEach((freq, i) => {
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
-            
             osc.type = 'sine';
-            // レベルに応じてピッチを少し上げる
             osc.frequency.value = freq * (1 + (currentLevel * 0.02));
-            
             gain.gain.setValueAtTime(0, audioCtx.currentTime);
             gain.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime + 0.1 + (i * 0.1));
             gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-            
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start(audioCtx.currentTime + (i * 0.1));
-        osc.stop(audioCtx.currentTime + duration);
-    });
-}
-
-function renderLogs() {
-    logListContainer.innerHTML = '';
-    if (growthLogs.length === 0) {
-        logListContainer.innerHTML = '<p style="text-align:center; color:#64748b; margin-top:2rem;">まだ記録がありません</p>';
-        return;
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(audioCtx.currentTime + (i * 0.1));
+            osc.stop(audioCtx.currentTime + duration);
+        });
     }
-    growthLogs.forEach(log => {
-        const div = document.createElement('div');
-        div.className = 'log-item';
-        // その時点のレベルの色を左端のボーダー色にすることも可能だが、今回は一律primaryカラーに
-        div.innerHTML = `<div class="log-date">${log.date}</div><div class="log-text">${log.text}</div>`;
-        logListContainer.appendChild(div);
-    });
-}
 
-// AI Logic (Separated by Action Type)
+    // AI Replies
     const effortReplies = [
         '素晴らしい努力です！その行動が確実に結晶を輝かせています。', 
         '継続は力なり。今日の積み重ねが未来のあなたを作ります！', 
-        '最高です！この調子で成長の雫を貯めていきましょう。',
-        'その行動があなたの魅力的な結晶を育てています！'
+        '最高です！この調子で成長の雫を貯めていきましょう。'
     ];
-    
     const guiltReplies = [
         '脳を休ませる時間も大切です。またここから始めましょう！', 
         'インプットの時間は終わりました。さあ、アウトプットの結晶を育てましょう。',
-        '体が休息を求めていた証拠です。自分を責めず、今からの行動を褒めてあげてくださいね。', 
-        '今このアプリを開いて記録したこと自体が、大きな一歩です。素晴らしい！',
-        '過去は変えられませんが、今の行動は選べます。ナイスです！'
+        '体が休息を求めていた証拠です。自分を責めず、今からの行動を褒めてあげてくださいね。'
     ];
-
     function getAiResponse(type) {
-        if (type === 'guilt') {
-            return guiltReplies[Math.floor(Math.random() * guiltReplies.length)];
-        } else {
-            return effortReplies[Math.floor(Math.random() * effortReplies.length)];
+        if (type === 'guilt') return guiltReplies[Math.floor(Math.random() * guiltReplies.length)];
+        return effortReplies[Math.floor(Math.random() * effortReplies.length)];
+    }
+
+    function showAiMessage(msgBox, msg) {
+        msgBox.textContent = msg;
+        msgBox.classList.add('show');
+        setTimeout(() => msgBox.classList.remove('show'), 6000);
+    }
+
+    function spawnSandParticles(color, count=20) {
+        for (let i = 0; i < count; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'sand-particle';
+            particle.style.backgroundColor = color;
+            particle.style.left = `calc(50% + ${(Math.random() - 0.5) * 80}px)`;
+            particle.style.top = '40%';
+            particle.style.animationDelay = `${Math.random() * 0.5}s`;
+            document.body.appendChild(particle);
+            setTimeout(() => particle.remove(), 1500);
         }
     }
 
-    function showAiMessage(msg) {
-        aiMessage.textContent = msg;
-        aiMessage.classList.add('show');
-        setTimeout(() => {
-            aiMessage.classList.remove('show');
-        }, 6000); // 6秒後に消える
-    }
-
-    function handleAction(type = 'effort', isPomodoro = false, forcedText = null) {
-        const text = forcedText !== null ? forcedText : input.value.trim();
+    function handleEffort(isPomodoro = false) {
+        const text = isPomodoro ? "ポモドーロ完了！" : inputEffort.value.trim();
         if (!text && !isPomodoro) return;
+        initAudio();
+        inputEffort.value = ''; inputEffort.blur();
 
-        if (!isPomodoro) {
-            initAudio();
-            input.value = '';
-            input.blur();
-        }
-
-        if (type === 'guilt') {
-            // 翻訳機（砂の地層への変換）の処理
-            translatorUI.classList.add('show');
-            playDropSound(); // 翻訳開始音として代用
-
-            setTimeout(() => {
-                translatorUI.classList.remove('show');
-                
-                // ポジティブな翻訳メッセージを表示
-                const reply = getAiResponse('guilt');
-                showAiMessage(reply);
-
-                // 砂が落ちるアニメーション
-                const color = sandColors[Math.floor(Math.random() * sandColors.length)];
-                for (let i = 0; i < 20; i++) {
-                    const particle = document.createElement('div');
-                    particle.className = 'sand-particle';
-                    particle.style.backgroundColor = color;
-                    particle.style.left = `calc(50% + ${(Math.random() - 0.5) * 60}px)`;
-                    particle.style.top = '35%';
-                    particle.style.animationDelay = `${Math.random() * 0.5}s`;
-                    document.body.appendChild(particle);
-                    
-                    setTimeout(() => particle.remove(), 2000);
-                }
-
-                playAbsorbSound(); // 砂が積もる音として
-
-                // 地層に追加
-                setTimeout(() => {
-                    sandLayers.push(color);
-                    localStorage.setItem('crystalSand', JSON.stringify(sandLayers));
-                    addSandLayerToDOM(color);
-                    
-                    // ログ保存
-                    const now = new Date();
-                    const dateStr = `${now.getMonth()+1}/${now.getDate()} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
-                    growthLogs.unshift({ date: dateStr, text: `[浄化] ${text}` });
-                    localStorage.setItem('crystalLogs', JSON.stringify(growthLogs));
-                    updateStreak();
-                }, 1000);
-
-            }, 2000); // 翻訳にかかる時間(2秒)
-            return;
-        }
-
-        // 成長（努力）のアニメーション
         const drop = document.createElement('div');
         drop.className = `drop effort`;
         dropOrigin.appendChild(drop);
         playDropSound();
 
-        // 到達時処理
         setTimeout(() => {
             drop.remove();
-            
-            // ログの保存
+            // Log & Crystal
             const now = new Date();
             const dateStr = `${now.getMonth()+1}/${now.getDate()} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
             growthLogs.unshift({ date: dateStr, text: text });
             localStorage.setItem('crystalLogs', JSON.stringify(growthLogs));
-            
-            // アニメーションリスタート
-            crystal.classList.remove('absorb');
-            void crystal.offsetWidth;
-            
-            crystal.classList.add('absorb');
-            
-            createRipple();
+            crystal.classList.remove('absorb'); void crystal.offsetWidth; crystal.classList.add('absorb');
             playAbsorbSound();
-            levelUp();
+            
+            // Sand Generation (Effort = Crystal Color)
+            const effortColor = colorPalette[(currentLevel - 1) % colorPalette.length];
+            spawnSandParticles(effortColor, 15);
+            setTimeout(() => {
+                sandLayers.push(effortColor);
+                localStorage.setItem('crystalSand', JSON.stringify(sandLayers));
+                addSandLayerToDOM(effortColor);
+            }, 1000);
 
-            // AIメッセージ表示
-            const reply = getAiResponse('effort');
-            showAiMessage(reply);
+            // Level Up
+            currentLevel++;
+            levelValue.textContent = currentLevel;
+            updateCrystalVisuals();
+            currentWidth = Math.min(currentWidth + 2, 300);
+            document.documentElement.style.setProperty('--crystal-width', currentWidth + 'px');
+            updateStreak();
 
+            showAiMessage(aiMessageCrystal, getAiResponse('effort'));
         }, 1000);
     }
 
-    function formatTime(seconds) {
-        const m = Math.floor(seconds / 60).toString().padStart(2, '0');
-        const s = (seconds % 60).toString().padStart(2, '0');
-        return `${m}:${s}`;
+    function handleGuilt() {
+        const text = inputGuilt.value.trim();
+        if (!text) return;
+        initAudio();
+        inputGuilt.value = ''; inputGuilt.blur();
+
+        translatorMachine.classList.add('translating');
+        playDropSound();
+
+        setTimeout(() => {
+            translatorMachine.classList.remove('translating');
+            
+            showAiMessage(aiMessageTranslator, getAiResponse('guilt'));
+
+            // Sand Generation (Guilt = Pastel Color)
+            const guiltColor = sandColors[Math.floor(Math.random() * sandColors.length)];
+            spawnSandParticles(guiltColor, 25);
+            playAbsorbSound();
+
+            setTimeout(() => {
+                sandLayers.push(guiltColor);
+                localStorage.setItem('crystalSand', JSON.stringify(sandLayers));
+                addSandLayerToDOM(guiltColor);
+                
+                const now = new Date();
+                const dateStr = `${now.getMonth()+1}/${now.getDate()} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+                growthLogs.unshift({ date: dateStr, text: `[浄化] ${text}` });
+                localStorage.setItem('crystalLogs', JSON.stringify(growthLogs));
+                updateStreak();
+            }, 1000);
+        }, 2000);
     }
 
+    // Nav Switcher
+    navBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            navBtns.forEach(b => b.classList.remove('active'));
+            viewSections.forEach(v => v.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById(btn.getAttribute('data-target')).classList.add('active');
+        });
+    });
+
+    // Listeners
+    btnEffort.addEventListener('click', () => handleEffort(false));
+    inputEffort.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleEffort(false); });
+    btnGuilt.addEventListener('click', handleGuilt);
+    inputGuilt.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleGuilt(); });
+
+    // Pomodoro
     function toggleTimer() {
         initAudio();
         if (isTimerRunning) {
-            clearInterval(timerInterval);
-            isTimerRunning = false;
-            pomodoroBtn.textContent = `🍅 ${formatTime(timeLeft)}`;
-            pomodoroBtn.classList.remove('active');
-            crystal.style.animation = ''; // 鼓動停止
+            clearInterval(timerInterval); isTimerRunning = false;
+            pomodoroBtn.textContent = `🍅 25:00`; pomodoroBtn.classList.remove('active');
+            crystal.style.animation = '';
         } else {
             isTimerRunning = true;
             pomodoroBtn.classList.add('active');
-            // 集中モード中はクリスタルがゆっくり脈打つ
             crystal.style.animation = 'wrapperPulse 4s infinite alternate ease-in-out';
-            
             timerInterval = setInterval(() => {
                 if (timeLeft > 0) {
                     timeLeft--;
-                    pomodoroBtn.textContent = `🍅 ${formatTime(timeLeft)}`;
+                    pomodoroBtn.textContent = `🍅 ${Math.floor(timeLeft / 60).toString().padStart(2, '0')}:${(timeLeft % 60).toString().padStart(2, '0')}`;
                 } else {
-                    clearInterval(timerInterval);
-                    isTimerRunning = false;
-                    timeLeft = 25 * 60;
-                    pomodoroBtn.textContent = '🍅 25:00';
-                    pomodoroBtn.classList.remove('active');
+                    clearInterval(timerInterval); isTimerRunning = false; timeLeft = 25 * 60;
+                    pomodoroBtn.textContent = '🍅 25:00'; pomodoroBtn.classList.remove('active');
                     crystal.style.animation = '';
-                    // ポモドーロ完了時、自動で大きく成長（努力扱い）
-                    handleAction('effort', true, "ポモドーロ（25分集中）を完了した！");
+                    handleEffort(true);
                 }
             }, 1000);
         }
     }
-
-    function createRipple() {
-        const ripple = document.createElement('div');
-        ripple.className = 'ripple';
-        rippleContainer.appendChild(ripple);
-        
-        setTimeout(() => {
-            ripple.remove();
-        }, 1000);
-    }
-
-    function levelUp() {
-        currentLevel++;
-        levelValue.textContent = currentLevel;
-        
-        // 色を追加していく
-        updateCrystalVisuals();
-
-        // 大きさを成長させる (1回につき2px大きく、最大300pxまで)
-        currentWidth = Math.min(currentWidth + 2, 300);
-        document.documentElement.style.setProperty('--crystal-width', currentWidth + 'px');
-        
-        // データの保存とストリーク更新（レベル等は保存しない）
-        updateStreak();
-    }
-
-    // イベントリスナー
-    btnEffort.addEventListener('click', () => handleAction('effort'));
-    btnGuilt.addEventListener('click', () => handleAction('guilt'));
-    
-    input.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            // エンターキーの場合はデフォルトで努力とする
-            handleAction('effort');
-        }
-    });
-
     pomodoroBtn.addEventListener('click', toggleTimer);
 
+    // Logs
     openLogBtn.addEventListener('click', () => {
-        renderLogs();
+        logListContainer.innerHTML = '';
+        if (growthLogs.length === 0) {
+            logListContainer.innerHTML = '<p style="text-align:center; color:#64748b; margin-top:2rem;">まだ記録がありません</p>';
+        } else {
+            growthLogs.forEach(log => {
+                const div = document.createElement('div');
+                div.className = 'log-item';
+                div.innerHTML = `<div class="log-date">${log.date}</div><div class="log-text">${log.text}</div>`;
+                logListContainer.appendChild(div);
+            });
+        }
         logModal.classList.add('show');
     });
-
-    closeLogBtn.addEventListener('click', () => {
-        logModal.classList.remove('show');
-    });
+    closeLogBtn.addEventListener('click', () => logModal.classList.remove('show'));
 });

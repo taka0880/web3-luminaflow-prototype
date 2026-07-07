@@ -3,75 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CrystalLog - 成長の結晶</title>
+    <title>CrystalLog - 行動の結晶化</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="mobile-app">
-        
-        <!-- 上部：鍾乳洞と結晶のステージ -->
-        <div class="cave-stage" id="stage">
-            
-            <div class="top-info">
-                <div class="level-badge">LEVEL <span id="levelValue">1</span></div>
-                <div class="streak-badge">🔥 <span id="streakValue">1</span>日目</div>
-                <button class="pomodoro-btn" id="pomodoroBtn">🍅 25:00</button>
-                <button class="log-btn" id="openLogBtn">📜 記録</button>
+        <!-- 上部：ステータス情報 -->
+        <div class="top-info">
+            <div class="level-badge">LEVEL <span id="levelValue">1</span></div>
+            <div class="streak-badge">🔥 <span id="streakValue">1</span>日目</div>
+            <button class="pomodoro-btn" id="pomodoroBtn">🍅 25:00</button>
+            <button class="log-btn" id="openLogBtn">📜 記録</button>
+        </div>
+
+        <!-- 鍾乳洞ステージ (背景) -->
+        <div class="cave-stage">
+            <div class="drop-origin" id="dropOrigin"></div>
+
+            <!-- 地層 (砂) コンテナ: 常に背面に配置 -->
+            <div class="sand-strata" id="sandStrata"></div>
+
+            <!-- ▼ 画面1: 結晶 (デフォルト) ▼ -->
+            <div class="view-section active" id="viewCrystal">
+                <div class="crystal-area">
+                    <div class="ai-message" id="aiMessageCrystal"></div>
+                    <div class="crystal-glow" id="crystalGlow"></div>
+                    <div class="crystal-wrapper" id="mainCrystal">
+                        <img src="crystal.png" alt="Crystal" class="crystal-img">
+                        <div class="color-overlay"></div>
+                    </div>
+                </div>
+                <div class="action-panel">
+                    <p class="action-title">今日の努力を結晶に</p>
+                    <div class="input-group">
+                        <input type="text" id="inputEffort" placeholder="例: 本を30分読んだ" autocomplete="off">
+                        <button class="action-btn effort-btn" id="btnEffort">💧 成長</button>
+                    </div>
+                </div>
             </div>
 
-            <!-- 天井の雫の発生源 (背景画像に鍾乳石が含まれるため非表示) -->
-            <div class="stalactite-area">
-                <div class="drop-origin" id="dropOrigin"></div>
+            <!-- ▼ 画面2: 翻訳機 ▼ -->
+            <div class="view-section" id="viewTranslator">
+                <div class="translator-area">
+                    <div class="ai-message" id="aiMessageTranslator"></div>
+                    <div class="translator-machine" id="translatorMachine">
+                        <div class="translator-icon">🔄</div>
+                        <div class="translator-text">罪悪感をポジティブに翻訳します</div>
+                    </div>
+                </div>
+                <div class="action-panel">
+                    <p class="action-title">罪悪感を浄化する</p>
+                    <div class="input-group">
+                        <input type="text" id="inputGuilt" placeholder="例: ついスマホを見すぎた" autocomplete="off">
+                        <button class="action-btn guilt-btn" id="btnGuilt">🌧️ 翻訳</button>
+                    </div>
+                </div>
             </div>
 
-            <!-- 翻訳機UI (デフォルト非表示) -->
-            <div class="translator-ui" id="translatorUI">
-                <div class="translator-icon">🔄</div>
-                <div class="translator-text">罪悪感をポジティブに翻訳中...</div>
-            </div>
-
-            <!-- 成長する結晶 (AI生成画像を使用) -->
-            <div class="crystal-area">
-                <!-- 地層 (砂) コンテナ -->
-                <div class="sand-strata" id="sandStrata"></div>
-
-                <div class="ai-message" id="aiMessage"></div>
-                <div class="crystal-glow" id="crystalGlow"></div>
-                <div class="crystal-wrapper" id="mainCrystal">
-                    <img src="crystal.png" alt="Crystal" class="crystal-img">
-                    <div class="color-overlay"></div>
+            <!-- ▼ 画面3: 砂絵 (地層) ▼ -->
+            <div class="view-section" id="viewStrata">
+                <div class="strata-info">
+                    <h2>人生の地層</h2>
+                    <p>これまでの努力と浄化された罪悪感の記録</p>
                 </div>
             </div>
             
-            <!-- 波紋用コンテナ -->
             <div class="ripple-container" id="rippleContainer"></div>
         </div>
 
-        <!-- 下部：成長入力パネル -->
-        <div class="bottom-panel">
-            <div class="action-area">
-                <p class="action-title">行動をクリスタルに捧げる</p>
-                <div class="input-group">
-                    <input type="text" id="growthInput" placeholder="例: 本を読んだ / SNSを見すぎた" autocomplete="off">
-                    <button class="translate-btn effort-btn" id="dropBtnEffort">💧 成長</button>
-                    <button class="translate-btn guilt-btn" id="dropBtnGuilt">🌧️ 浄化</button>
-                </div>
-            </div>
+        <!-- ボトムナビゲーション -->
+        <div class="bottom-nav">
+            <button class="nav-btn active" data-target="viewCrystal">
+                <span class="nav-icon">💎</span>
+                <span class="nav-text">結晶</span>
+            </button>
+            <button class="nav-btn" data-target="viewTranslator">
+                <span class="nav-icon">🔄</span>
+                <span class="nav-text">翻訳機</span>
+            </button>
+            <button class="nav-btn" data-target="viewStrata">
+                <span class="nav-icon">🏜️</span>
+                <span class="nav-text">砂絵</span>
+            </button>
         </div>
 
-        <!-- ログモーダル -->
+        <!-- ログ一覧モーダル -->
         <div class="log-modal" id="logModal">
             <div class="log-modal-header">
                 <h3>成長の軌跡</h3>
-                <button class="close-btn" id="closeLogBtn">×</button>
+                <button class="close-btn" id="closeLogBtn">&times;</button>
             </div>
             <div class="log-list-container" id="logListContainer">
-                <!-- ログアイテムがここに追加される -->
+                <!-- ログがここに追加される -->
             </div>
         </div>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>

@@ -287,16 +287,7 @@ body {
     to { width: 300px; height: 300px; opacity: 0; border-width: 0px; }
 }
 
-/* --- 下部パネル --- */
-.bottom-panel {
-    background: var(--panel-bg);
-    padding: 2rem 1.5rem;
-    box-shadow: 0 -10px 30px rgba(0,0,0,0.8);
-    z-index: 30;
-    border-top: 1px solid rgba(255,255,255,0.1);
-}
-
-/* アクションエリア */
+/* --- アクションエリア --- */
 .action-title {
     font-size: 0.9rem;
     color: var(--text-main);
@@ -328,32 +319,6 @@ body {
     color: #475569;
 }
 
-.translate-btn {
-    background: linear-gradient(135deg, var(--primary), #8b5cf6);
-    color: white;
-    border: none;
-    padding: 0 1rem;
-    height: 40px;
-    border-radius: 999px;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: all 0.2s;
-    box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
-}
-
-.translate-btn:active {
-    transform: scale(0.9);
-}
-
-.guilt-btn {
-    background: linear-gradient(135deg, #eab308, #ca8a04);
-    box-shadow: 0 0 10px rgba(234, 179, 8, 0.4);
-}
-
 /* --- タイマー＆ログボタン --- */
 .pomodoro-btn,
 .log-btn {
@@ -379,44 +344,7 @@ body {
     border-color: #ef4444;
 }
 
-/* --- 翻訳機 UI --- */
-.translator-ui {
-    position: absolute;
-    top: 35%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0.9);
-    background: rgba(15, 23, 42, 0.85);
-    backdrop-filter: blur(12px);
-    padding: 2rem;
-    border-radius: 20px;
-    border: 2px solid #eab308;
-    color: #fef08a;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    z-index: 100;
-    opacity: 0;
-    pointer-events: none;
-    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 10px 40px rgba(234, 179, 8, 0.2);
-    width: 80%;
-    text-align: center;
-}
-
-.translator-ui.show {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-}
-
-.translator-icon {
-    font-size: 3rem;
-    animation: spin 1.5s linear infinite;
-}
-
-@keyframes spin {
-    100% { transform: rotate(360deg); }
-}
+/* --- 旧UI削除 --- */
 
 /* --- AIメッセージ --- */
 .ai-message {
@@ -531,3 +459,147 @@ body {
     font-size: 0.95rem;
     color: #f8fafc;
 }
+
+/* --- ボトムナビゲーション --- */
+.bottom-nav {
+    display: flex;
+    background: #0f172a;
+    border-top: 1px solid #334155;
+    padding-bottom: env(safe-area-inset-bottom); /* iOS対応 */
+    z-index: 50;
+}
+
+.nav-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #64748b;
+    padding: 0.8rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.nav-btn.active {
+    color: var(--primary);
+}
+
+.nav-btn.active:nth-child(2) {
+    color: #eab308;
+}
+
+.nav-btn.active:nth-child(3) {
+    color: #f472b6;
+}
+
+.nav-icon {
+    font-size: 1.5rem;
+    transition: transform 0.2s;
+}
+
+.nav-btn.active .nav-icon {
+    transform: translateY(-2px) scale(1.1);
+}
+
+.nav-text {
+    font-size: 0.7rem;
+    font-weight: bold;
+}
+
+/* --- ビューセクション (画面切り替え) --- */
+.view-section {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* 下部にアクションパネルを配置 */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 10;
+}
+
+.view-section.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* --- アクションパネル --- */
+.action-panel {
+    background: rgba(30, 41, 59, 0.8);
+    backdrop-filter: blur(10px);
+    padding: 1.5rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    z-index: 20;
+    padding-bottom: 2rem; /* ナビバーの上の余白 */
+}
+
+.action-btn {
+    background: linear-gradient(135deg, var(--primary), #8b5cf6);
+    color: white;
+    border: none;
+    padding: 0 1rem;
+    height: 40px;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+.action-btn.guilt-btn {
+    background: linear-gradient(135deg, #eab308, #ca8a04);
+    box-shadow: 0 0 10px rgba(234, 179, 8, 0.4);
+}
+.action-btn:active { transform: scale(0.95); }
+
+/* --- 個別のビュー調整 --- */
+.translator-area {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 100px; /* パネル分上げる */
+}
+
+.translator-machine {
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(12px);
+    padding: 2rem;
+    border-radius: 20px;
+    border: 2px solid #eab308;
+    color: #fef08a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 10px 40px rgba(234, 179, 8, 0.2);
+    width: 80%;
+    text-align: center;
+    transition: all 0.3s;
+}
+.translator-machine.translating .translator-icon {
+    animation: spin 1s linear infinite;
+}
+
+.strata-info {
+    position: absolute;
+    top: 20%;
+    width: 100%;
+    text-align: center;
+    color: white;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+    opacity: 0.8;
+}
+.strata-info h2 { font-size: 1.5rem; margin-bottom: 0.5rem; color: #fdf2f8; }
+.strata-info p { font-size: 0.85rem; color: #cbd5e1; }
+

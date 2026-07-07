@@ -642,23 +642,24 @@ body {
     height: 100%;
     display: flex;
     justify-content: center;
-    align-items: center;
-    padding-bottom: 80px; /* 少し下げる */
+    align-items: flex-start; /* 上の方に配置して背景の機械を隠さない */
+    padding-top: 18%; /* 上から少し下げる */
 }
 
 .translator-machine {
-    background: rgba(15, 23, 42, 0.85);
-    backdrop-filter: blur(12px);
-    padding: 2rem;
-    border-radius: 20px;
-    border: 2px solid #eab308;
-    color: #fef08a;
+    background: rgba(0, 0, 0, 0.3); /* かなり透明にして背景を見せる */
+    backdrop-filter: blur(2px);
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.15); /* 枠線も極細に */
+    color: #fff;
+    text-shadow: 0 0 10px rgba(14, 165, 233, 0.8), 0 0 20px rgba(14, 165, 233, 0.5), 0 2px 4px rgba(0,0,0,0.8);
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 1rem;
-    box-shadow: 0 10px 40px rgba(234, 179, 8, 0.2);
-    width: 80%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    width: 85%;
     text-align: center;
     transition: all 0.3s;
 }

@@ -14,6 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const logListContainer = document.getElementById('logListContainer');
     const pomodoroBtn = document.getElementById('pomodoroBtn');
     const aiMessage = document.getElementById('aiMessage');
+    const translatorUI = document.getElementById('translatorUI');
+    const sandStrata = document.getElementById('sandStrata');
     
     // Pomodoro State
     let timerInterval = null;
@@ -26,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let streakDays = parseInt(localStorage.getItem('crystalStreak')) || 1;
     let lastActionDate = localStorage.getItem('crystalLastDate') || null;
     let growthLogs = JSON.parse(localStorage.getItem('crystalLogs')) || [];
+    let sandLayers = JSON.parse(localStorage.getItem('crystalSand')) || [];
     
     // UIとスタイルの初期化
     levelValue.textContent = currentLevel;
@@ -65,9 +68,34 @@ document.addEventListener('DOMContentLoaded', () => {
         // 簡易的なHex -> rgba変換（実際にはCSS変数を上書き）
         document.documentElement.style.setProperty('--glow-color', latestColor);
     }
+
+    // 砂の地層関連
+    const sandColors = ['#fde047', '#fbcfe8', '#a7f3d0', '#bfdbfe', '#ddd6fe', '#fed7aa'];
+
+    function renderSandLayers() {
+        sandStrata.innerHTML = '';
+        sandLayers.forEach(color => {
+            addSandLayerToDOM(color);
+        });
+    }
+
+    function addSandLayerToDOM(color) {
+        const layer = document.createElement('div');
+        layer.className = 'sand-layer';
+        layer.style.backgroundColor = color;
+        
+        // 自然な地層に見せるためのランダムな傾き
+        const waveType = Math.floor(Math.random() * 3);
+        if (waveType === 0) layer.style.borderRadius = '50% 50% 0 0 / 100% 100% 0 0';
+        if (waveType === 1) layer.style.borderRadius = '100% 0% 0 0 / 100% 0% 0 0';
+        if (waveType === 2) layer.style.borderRadius = '0% 100% 0 0 / 0% 100% 0 0';
+        
+        sandStrata.prepend(layer); // 最新の層が上に重なるように
+    }
     
     // 初期ビジュアルセット
     updateCrystalVisuals();
+    renderSandLayers();
 
     // 継続日数の更新ロジック
     function updateStreak() {
@@ -206,9 +234,55 @@ function renderLogs() {
             input.blur();
         }
 
-        // 雫アニメーション
+        if (type === 'guilt') {
+            // 翻訳機（砂の地層への変換）の処理
+            translatorUI.classList.add('show');
+            playDropSound(); // 翻訳開始音として代用
+
+            setTimeout(() => {
+                translatorUI.classList.remove('show');
+                
+                // ポジティブな翻訳メッセージを表示
+                const reply = getAiResponse('guilt');
+                showAiMessage(reply);
+
+                // 砂が落ちるアニメーション
+                const color = sandColors[Math.floor(Math.random() * sandColors.length)];
+                for (let i = 0; i < 20; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'sand-particle';
+                    particle.style.backgroundColor = color;
+                    particle.style.left = `calc(50% + ${(Math.random() - 0.5) * 60}px)`;
+                    particle.style.top = '35%';
+                    particle.style.animationDelay = `${Math.random() * 0.5}s`;
+                    document.body.appendChild(particle);
+                    
+                    setTimeout(() => particle.remove(), 2000);
+                }
+
+                playAbsorbSound(); // 砂が積もる音として
+
+                // 地層に追加
+                setTimeout(() => {
+                    sandLayers.push(color);
+                    localStorage.setItem('crystalSand', JSON.stringify(sandLayers));
+                    addSandLayerToDOM(color);
+                    
+                    // ログ保存
+                    const now = new Date();
+                    const dateStr = `${now.getMonth()+1}/${now.getDate()} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+                    growthLogs.unshift({ date: dateStr, text: `[浄化] ${text}` });
+                    localStorage.setItem('crystalLogs', JSON.stringify(growthLogs));
+                    updateStreak();
+                }, 1000);
+
+            }, 2000); // 翻訳にかかる時間(2秒)
+            return;
+        }
+
+        // 成長（努力）のアニメーション
         const drop = document.createElement('div');
-        drop.className = `drop ${type}`;
+        drop.className = `drop effort`;
         dropOrigin.appendChild(drop);
         playDropSound();
 
@@ -233,7 +307,7 @@ function renderLogs() {
             levelUp();
 
             // AIメッセージ表示
-            const reply = getAiResponse(type);
+            const reply = getAiResponse('effort');
             showAiMessage(reply);
 
         }, 1000);

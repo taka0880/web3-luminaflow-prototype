@@ -145,6 +145,21 @@ body {
     background: linear-gradient(to top, #eab308, transparent);
 }
 
+/* 砂のパーティクル */
+.sand-particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    z-index: 12;
+    animation: sandFall 1.5s ease-in forwards;
+    box-shadow: 0 0 10px currentColor;
+}
+@keyframes sandFall {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(200px) scale(0); opacity: 0; }
+}
+
 /* アニメーションを画面の高さに合わせて調整 */
 @keyframes fall {
     0% { top: 0; opacity: 0; transform: translateX(-50%) scale(0.5); }
@@ -162,6 +177,32 @@ body {
     align-items: center;
     width: 100%;
     height: 350px;
+}
+
+/* 砂の地層 (Strata) */
+.sand-strata {
+    position: absolute;
+    bottom: -2rem; /* カバーするために少し下へ */
+    left: 0;
+    width: 100%;
+    max-height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    z-index: 1; /* 結晶の後ろ */
+    pointer-events: none;
+}
+
+.sand-layer {
+    width: 120%;
+    margin-left: -10%;
+    height: 12px;
+    flex-shrink: 0;
+    box-shadow: inset 0 2px 5px rgba(255,255,255,0.3), inset 0 -2px 5px rgba(0,0,0,0.2);
+    border-top: 1px solid rgba(255,255,255,0.4);
+    opacity: 0.9;
+    border-radius: 50% 50% 0 0 / 100% 100% 0 0; /* マイルドな丘状 */
+    margin-bottom: -6px; /* 少しずつ重なる */
 }
 
 .crystal-wrapper {
@@ -336,6 +377,45 @@ body {
 .pomodoro-btn.active {
     background: rgba(220, 38, 38, 0.5);
     border-color: #ef4444;
+}
+
+/* --- 翻訳機 UI --- */
+.translator-ui {
+    position: absolute;
+    top: 35%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(12px);
+    padding: 2rem;
+    border-radius: 20px;
+    border: 2px solid #eab308;
+    color: #fef08a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 10px 40px rgba(234, 179, 8, 0.2);
+    width: 80%;
+    text-align: center;
+}
+
+.translator-ui.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.translator-icon {
+    font-size: 3rem;
+    animation: spin 1.5s linear infinite;
+}
+
+@keyframes spin {
+    100% { transform: rotate(360deg); }
 }
 
 /* --- AIメッセージ --- */

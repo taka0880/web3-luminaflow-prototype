@@ -21,9 +21,6 @@
         <div class="cave-stage">
             <div class="drop-origin" id="dropOrigin"></div>
 
-            <!-- 地層 (砂) コンテナ: 常に背面に配置 -->
-            <div class="sand-strata" id="sandStrata"></div>
-
             <!-- ▼ 画面1: 結晶 (デフォルト) ▼ -->
             <div class="view-section active" id="viewCrystal">
                 <div class="crystal-area">
@@ -63,6 +60,9 @@
 
             <!-- ▼ 画面3: 砂絵 (地層) ▼ -->
             <div class="view-section" id="viewStrata">
+                <!-- 地層 (砂) コンテナ: 砂絵タブでのみ表示 -->
+                <div class="sand-strata" id="sandStrata"></div>
+                
                 <div class="strata-info">
                     <h2>人生の地層</h2>
                     <p>これまでの努力と浄化された罪悪感の記録</p>

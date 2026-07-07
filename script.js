@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sandStrata = document.getElementById('sandStrata');
     const sandDisplacement = document.getElementById('sandDisplacement');
     const btnMixSand = document.getElementById('btnMixSand');
+    const generatedSandArt = document.getElementById('generatedSandArt');
     
     const navBtns = document.querySelectorAll('.nav-btn');
     const viewSections = document.querySelectorAll('.view-section');
@@ -290,26 +291,31 @@ document.addEventListener('DOMContentLoaded', () => {
     btnGuilt.addEventListener('click', handleGuilt);
     inputGuilt.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleGuilt(); });
 
-    // Mix Sand Action
+    // Mix Sand Action (AI Art Generation Simulation)
     if(btnMixSand) {
         btnMixSand.addEventListener('click', () => {
             initAudio();
-            playDropSound(); // 代用の音
+            playDropSound();
             
-            // 混ぜるボタンを押すたびにスケールを上げてマーブル状にする
-            let targetScale = currentMixScale + 30;
-            let scale = currentMixScale;
             btnMixSand.disabled = true;
+            btnMixSand.textContent = "🔄 AIが記録を分析中...";
             
-            let interval = setInterval(() => {
-                scale += 2;
-                sandDisplacement.setAttribute('scale', scale);
-                if (scale >= targetScale) {
-                    clearInterval(interval);
-                    currentMixScale = targetScale;
-                    btnMixSand.disabled = false;
-                }
-            }, 30);
+            // 少し待ってから生成完了
+            setTimeout(() => {
+                btnMixSand.textContent = "🎨 今日の砂絵が完成しました";
+                
+                // 3つの画像からランダムに1つ選ぶ（プロトタイプ用の擬似AI生成）
+                const images = ['sand_art_1.png', 'sand_art_2.png', 'sand_art_3.png'];
+                const randomImage = images[Math.floor(Math.random() * images.length)];
+                
+                generatedSandArt.src = randomImage;
+                
+                // 地層をフェードアウトして、アートをフェードイン
+                sandStrata.style.opacity = '0';
+                setTimeout(() => {
+                    generatedSandArt.classList.add('visible');
+                }, 500);
+            }, 3000);
         });
     }
 

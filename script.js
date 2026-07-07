@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const navBtns = document.querySelectorAll('.nav-btn');
     const viewSections = document.querySelectorAll('.view-section');
+    const bgLayers = document.querySelectorAll('.bg-layer');
 
     const openLogBtn = document.getElementById('openLogBtn');
     const closeLogBtn = document.getElementById('closeLogBtn');
@@ -279,7 +280,15 @@ document.addEventListener('DOMContentLoaded', () => {
             navBtns.forEach(b => b.classList.remove('active'));
             viewSections.forEach(v => v.classList.remove('active'));
             btn.classList.add('active');
-            document.getElementById(btn.getAttribute('data-target')).classList.add('active');
+            
+            const targetId = btn.getAttribute('data-target');
+            document.getElementById(targetId).classList.add('active');
+            
+            if (bgLayers) {
+                bgLayers.forEach(bg => bg.classList.remove('active'));
+                const bgTarget = document.getElementById('bg-' + targetId);
+                if (bgTarget) bgTarget.classList.add('active');
+            }
         });
     });
 

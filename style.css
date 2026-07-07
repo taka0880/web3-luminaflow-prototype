@@ -43,10 +43,6 @@ body {
 .cave-stage {
     flex: 1;
     position: relative;
-    /* AI生成した高画質な鍾乳洞画像を使用 */
-    background-image: url('cave_bg.png');
-    background-size: cover;
-    background-position: center bottom;
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -54,6 +50,31 @@ body {
     border-bottom: 2px solid #334155;
     /* 少し暗くして文字や結晶を目立たせる */
     box-shadow: inset 0 0 100px rgba(0,0,0,0.8);
+}
+
+/* 背景画像レイヤー（クロスフェード用） */
+.bg-layer {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-size: cover;
+    background-position: center center;
+    opacity: 0;
+    transition: opacity 1s ease;
+    z-index: 0; /* z-index:0にして文字の後ろへ */
+}
+.bg-layer.active {
+    opacity: 1;
+}
+.bg-crystal {
+    background-image: url('cave_bg.png');
+    background-position: center bottom;
+}
+.bg-translator {
+    background-image: url('translator_bg.png');
+}
+.bg-strata {
+    background-image: url('sandart_bg.png');
 }
 
 .top-info {

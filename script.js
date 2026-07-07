@@ -18,6 +18,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const translatorMachine = document.getElementById('translatorMachine');
     const sandStrata = document.getElementById('sandStrata');
+    const sandDisplacement = document.getElementById('sandDisplacement');
+    const btnMixSand = document.getElementById('btnMixSand');
+    
     const navBtns = document.querySelectorAll('.nav-btn');
     const viewSections = document.querySelectorAll('.view-section');
 
@@ -38,11 +41,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let lastActionDate = localStorage.getItem('crystalLastDate') || null;
     let growthLogs = JSON.parse(localStorage.getItem('crystalLogs')) || [];
     let sandLayers = JSON.parse(localStorage.getItem('crystalSand')) || [];
+    let currentMixScale = parseInt(localStorage.getItem('crystalSandMix')) || 0;
     
     // Initialize UI
     levelValue.textContent = currentLevel;
     streakValue.textContent = streakDays;
     document.documentElement.style.setProperty('--crystal-width', currentWidth + 'px');
+    sandDisplacement.setAttribute('scale', currentMixScale);
     
     // Colors
     const colorPalette = ['#38bdf8', '#818cf8', '#a855f7', '#f472b6', '#fbbf24', '#34d399', '#fb7185', '#38bdf8'];
@@ -93,6 +98,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     streakDays = 1; 
                 }
+                
+                // --- 1日でリセットされる砂の地層 ---
+                sandLayers = [];
+                currentMixScale = 0;
+                localStorage.setItem('crystalSand', JSON.stringify(sandLayers));
+                localStorage.setItem('crystalSandMix', currentMixScale);
+                sandDisplacement.setAttribute('scale', currentMixScale);
+                renderSandLayers();
+
             } else {
                 streakDays = 1;
             }
@@ -268,6 +282,30 @@ document.addEventListener('DOMContentLoaded', () => {
     inputEffort.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleEffort(false); });
     btnGuilt.addEventListener('click', handleGuilt);
     inputGuilt.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleGuilt(); });
+
+    // Mix Sand Action
+    if(btnMixSand) {
+        btnMixSand.addEventListener('click', () => {
+            initAudio();
+            playDropSound(); // 代用の音
+            
+            // 混ぜるボタンを押すたびにスケールを上げてマーブル状にする
+            let targetScale = currentMixScale + 30;
+            let scale = currentMixScale;
+            btnMixSand.disabled = true;
+            
+            let interval = setInterval(() => {
+                scale += 2;
+                sandDisplacement.setAttribute('scale', scale);
+                if (scale >= targetScale) {
+                    clearInterval(interval);
+                    currentMixScale = targetScale;
+                    localStorage.setItem('crystalSandMix', currentMixScale);
+                    btnMixSand.disabled = false;
+                }
+            }, 30);
+        });
+    }
 
     // Pomodoro
     function toggleTimer() {

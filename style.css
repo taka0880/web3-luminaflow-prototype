@@ -215,15 +215,17 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    /* 四角い画像の境界線がバレないように周囲をぼかす */
-    -webkit-mask-image: radial-gradient(ellipse at center, black 65%, transparent 85%);
-    mask-image: radial-gradient(ellipse at center, black 65%, transparent 85%);
+    /* 四角い画像の境界線がバレないようにマスクをさらに厳しめに */
+    -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 70%);
+    mask-image: radial-gradient(ellipse at center, black 40%, transparent 70%);
 }
 
 .crystal-img {
     width: 100%;
     height: auto;
     display: block;
+    /* 黒浮きしている背景を完全に潰して透過させる */
+    filter: contrast(1.5) brightness(0.8);
 }
 
 .color-overlay {

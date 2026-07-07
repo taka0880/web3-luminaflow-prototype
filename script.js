@@ -211,7 +211,8 @@ document.addEventListener('DOMContentLoaded', () => {
             currentLevel++;
             levelValue.textContent = currentLevel;
             updateCrystalVisuals();
-            currentWidth = Math.min(currentWidth + 2, 300);
+            // 大きくなりすぎて画像が荒くならないよう、最大サイズを制限
+            currentWidth = Math.min(currentWidth + 2, 220);
             document.documentElement.style.setProperty('--crystal-width', currentWidth + 'px');
             updateStreak();
 

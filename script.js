@@ -55,7 +55,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateCrystalVisuals() {
         const activeColors = [];
-        for (let i = 0; i < currentLevel; i++) {
+        // レベル5ごとに1色追加されるように、ゆっくりとした変化にする
+        const numColors = Math.floor((currentLevel - 1) / 5) + 1;
+        
+        for (let i = 0; i < numColors; i++) {
             activeColors.push(colorPalette[i % colorPalette.length]);
         }
         let gradient = activeColors[0];

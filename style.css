@@ -171,7 +171,7 @@ body {
 /* 結晶 (AI生成画像) */
 .crystal-area {
     position: absolute;
-    bottom: 2rem; 
+    bottom: 130px; /* アクションパネルの上に配置 */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -289,11 +289,12 @@ body {
 
 /* --- アクションエリア --- */
 .action-title {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: var(--text-main);
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     text-align: center;
     font-weight: bold;
+    opacity: 0.9;
 }
 
 .input-group {
@@ -301,7 +302,7 @@ body {
     background: #0f172a;
     border: 1px solid #334155;
     border-radius: 999px;
-    padding: 0.5rem;
+    padding: 0.3rem;
     box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
 }
 
@@ -310,8 +311,8 @@ body {
     background: transparent;
     border: none;
     color: white;
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
     outline: none;
 }
 
@@ -532,12 +533,12 @@ body {
 
 /* --- アクションパネル --- */
 .action-panel {
-    background: rgba(30, 41, 59, 0.8);
+    background: rgba(15, 23, 42, 0.6); /* 少し透け感をアップ */
     backdrop-filter: blur(10px);
-    padding: 1.5rem;
+    padding: 1rem;
     border-top: 1px solid rgba(255,255,255,0.1);
     z-index: 20;
-    padding-bottom: 2rem; /* ナビバーの上の余白 */
+    padding-bottom: 1rem; /* ナビバーの直上なので余白を削減 */
 }
 
 .action-btn {
@@ -545,9 +546,9 @@ body {
     color: white;
     border: none;
     padding: 0 1rem;
-    height: 40px;
+    height: 36px;
     border-radius: 999px;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: bold;
     cursor: pointer;
     flex-shrink: 0;
@@ -568,7 +569,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding-bottom: 100px; /* パネル分上げる */
+    padding-bottom: 130px; /* パネル分上げる */
 }
 
 .translator-machine {

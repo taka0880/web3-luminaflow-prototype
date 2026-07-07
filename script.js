@@ -41,7 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let lastActionDate = localStorage.getItem('crystalLastDate') || null;
     let growthLogs = JSON.parse(localStorage.getItem('crystalLogs')) || [];
     let sandLayers = JSON.parse(localStorage.getItem('crystalSand')) || [];
-    let currentMixScale = parseInt(localStorage.getItem('crystalSandMix')) || 0;
+    // 完全に平らだと不自然なので、初期状態から少しだけ波打たせる(5)
+    let currentMixScale = parseInt(localStorage.getItem('crystalSandMix')) || 5;
     
     // Initialize UI
     levelValue.textContent = currentLevel;
@@ -78,12 +79,22 @@ document.addEventListener('DOMContentLoaded', () => {
     function addSandLayerToDOM(color) {
         const layer = document.createElement('div');
         layer.className = 'sand-layer';
-        layer.style.backgroundColor = color;
-        const waveType = Math.floor(Math.random() * 3);
-        if (waveType === 0) layer.style.borderRadius = '50% 50% 0 0 / 100% 100% 0 0';
-        if (waveType === 1) layer.style.borderRadius = '100% 0% 0 0 / 100% 0% 0 0';
-        if (waveType === 2) layer.style.borderRadius = '0% 100% 0 0 / 0% 100% 0 0';
-        sandStrata.prepend(layer);
+        
+        // のっぺりした単色ではなく、光と影のグラデーションをつけて立体感を出す
+        layer.style.background = `linear-gradient(to bottom, rgba(255,255,255,0.4) 0%, ${color} 20%, ${color} 70%, rgba(0,0,0,0.4) 100%)`;
+        
+        // 自然な地層に見せるためのランダムな傾きとカーブ
+        const waveType = Math.floor(Math.random() * 4);
+        if (waveType === 0) layer.style.borderRadius = '50% 50% 0 0 / 100% 100% 0 0';      // 左右対称の丘
+        else if (waveType === 1) layer.style.borderRadius = '80% 20% 0 0 / 100% 100% 0 0'; // 左寄り
+        else if (waveType === 2) layer.style.borderRadius = '20% 80% 0 0 / 100% 100% 0 0'; // 右寄り
+        else if (waveType === 3) layer.style.borderRadius = '50% 50% 0 0 / 50% 50% 0 0';   // なだらか
+        
+        // 厚みや重なり具合もランダムにして「絵」っぽさを出す
+        layer.style.height = `${25 + Math.random() * 20}px`;
+        layer.style.marginBottom = `-${12 + Math.random() * 12}px`;
+        
+        sandStrata.prepend(layer); // 最新の層が上に重なるように
     }
     
     updateCrystalVisuals();
@@ -104,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // --- 1日でリセットされる砂の地層 ---
                 sandLayers = [];
-                currentMixScale = 0;
+                currentMixScale = 5; // 初期値に戻す
                 localStorage.setItem('crystalSand', JSON.stringify(sandLayers));
                 localStorage.setItem('crystalSandMix', currentMixScale);
                 sandDisplacement.setAttribute('scale', currentMixScale);

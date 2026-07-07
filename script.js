@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const translatorMachine = document.getElementById('translatorMachine');
     const sandStrata = document.getElementById('sandStrata');
-    const sandDisplacement = document.getElementById('sandDisplacement');
     const btnMixSand = document.getElementById('btnMixSand');
     const generatedSandArt = document.getElementById('generatedSandArt');
     
@@ -50,7 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
     levelValue.textContent = currentLevel;
     streakValue.textContent = streakDays;
     document.documentElement.style.setProperty('--crystal-width', currentWidth + 'px');
-    sandDisplacement.setAttribute('scale', currentMixScale);
     
     // Colors
     const colorPalette = ['#38bdf8', '#818cf8', '#a855f7', '#f472b6', '#fbbf24', '#34d399', '#fb7185', '#38bdf8'];

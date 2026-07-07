@@ -40,9 +40,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let streakDays = parseInt(localStorage.getItem('crystalStreak')) || 1;
     let lastActionDate = localStorage.getItem('crystalLastDate') || null;
     let growthLogs = JSON.parse(localStorage.getItem('crystalLogs')) || [];
-    let sandLayers = JSON.parse(localStorage.getItem('crystalSand')) || [];
-    // 完全に平らだと不自然なので、初期状態から少しだけ波打たせる(5)
-    let currentMixScale = parseInt(localStorage.getItem('crystalSandMix')) || 5;
+    
+    // 砂絵はリロードのたびにリセットする（エフェメラルな体験）
+    let sandLayers = [];
+    let currentMixScale = 5;
     
     // Initialize UI
     levelValue.textContent = currentLevel;
@@ -112,15 +113,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     streakDays = 1; 
                 }
-                
-                // --- 1日でリセットされる砂の地層 ---
-                sandLayers = [];
-                currentMixScale = 5; // 初期値に戻す
-                localStorage.setItem('crystalSand', JSON.stringify(sandLayers));
-                localStorage.setItem('crystalSandMix', currentMixScale);
-                sandDisplacement.setAttribute('scale', currentMixScale);
-                renderSandLayers();
-
             } else {
                 streakDays = 1;
             }
@@ -231,7 +223,6 @@ document.addEventListener('DOMContentLoaded', () => {
             spawnSandParticles(effortColor, 15);
             setTimeout(() => {
                 sandLayers.push(effortColor);
-                localStorage.setItem('crystalSand', JSON.stringify(sandLayers));
                 addSandLayerToDOM(effortColor);
             }, 1000);
 
@@ -272,7 +263,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             setTimeout(() => {
                 sandLayers.push(guiltColor);
-                localStorage.setItem('crystalSand', JSON.stringify(sandLayers));
                 addSandLayerToDOM(guiltColor);
                 
                 const now = new Date();
@@ -317,7 +307,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (scale >= targetScale) {
                     clearInterval(interval);
                     currentMixScale = targetScale;
-                    localStorage.setItem('crystalSandMix', currentMixScale);
                     btnMixSand.disabled = false;
                 }
             }, 30);

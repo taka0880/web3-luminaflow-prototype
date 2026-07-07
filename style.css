@@ -171,7 +171,7 @@ body {
 /* 結晶 (AI生成画像) */
 .crystal-area {
     position: absolute;
-    bottom: 130px; /* アクションパネルの上に配置 */
+    bottom: 60px; /* 下げつつ、アクションパネルの背後でぼやかして境界を隠す */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -215,6 +215,9 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    /* 四角い画像の境界線がバレないように周囲をぼかす */
+    -webkit-mask-image: radial-gradient(ellipse at center, black 65%, transparent 85%);
+    mask-image: radial-gradient(ellipse at center, black 65%, transparent 85%);
 }
 
 .crystal-img {
@@ -569,7 +572,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding-bottom: 130px; /* パネル分上げる */
+    padding-bottom: 80px; /* 少し下げる */
 }
 
 .translator-machine {

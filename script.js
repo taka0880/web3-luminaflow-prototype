@@ -1,4 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Start Screen
+    const startScreen = document.getElementById('startScreen');
+    const btnStart = document.getElementById('btnStart');
+    if (btnStart && startScreen) {
+        btnStart.addEventListener('click', () => {
+            startScreen.classList.add('hidden');
+        });
+    }
+
     // UI Elements
     const inputEffort = document.getElementById('inputEffort');
     const btnEffort = document.getElementById('btnEffort');

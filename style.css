@@ -39,6 +39,81 @@ body {
     box-shadow: 0 0 50px rgba(0,0,0,0.5);
 }
 
+/* --- スタート画面 --- */
+.start-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: url('cyber_bg.png') no-repeat center center;
+    background-size: cover;
+    transition: opacity 0.8s ease, visibility 0.8s;
+}
+
+.start-screen::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(2, 6, 23, 0.6);
+    backdrop-filter: blur(8px);
+}
+
+.start-content {
+    position: relative;
+    z-index: 1001;
+    text-align: center;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.app-title {
+    font-size: 46px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-shadow: 0 0 30px rgba(56, 189, 248, 1.0);
+    margin-bottom: 10px;
+}
+
+.app-subtitle {
+    font-size: 16px;
+    color: #e2e8f0;
+    letter-spacing: 2px;
+    margin-bottom: 50px;
+}
+
+.btn-start {
+    padding: 16px 48px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #fff;
+    background: linear-gradient(135deg, #0ea5e9, #3b82f6);
+    border: none;
+    border-radius: 40px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(14, 165, 233, 0.5);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-start:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 25px rgba(14, 165, 233, 0.7);
+}
+
+.start-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
 /* --- 鍾乳洞ステージ (背景画像) --- */
 .cave-stage {
     flex: 1;
